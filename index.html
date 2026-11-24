@@ -35,6 +35,13 @@
             background-attachment: fixed; 
         }
     </style>
+    <script>
+        // Si ya hay sesión activa, saltar a inicio.html ANTES de pintar el login.
+        // (Evita el "flash" del formulario de inicio de sesión antes del redirect.)
+        if (localStorage.getItem('hdm_nombre')) {
+            window.location.replace('inicio.html');
+        }
+    </script>
 </head>
 
 <body class="min-h-screen flex flex-col items-center justify-center p-4 antialiased">
@@ -121,14 +128,8 @@
             else { p.type = 'password'; i.textContent = 'visibility_off'; }
         }
 
-        // === Si ya hay sesión activa, ir directo a inicio.html ===
-        (function() {
-            const nombreGuardado = localStorage.getItem('hdm_nombre');
-            if (nombreGuardado) {
-                window.location.replace('inicio.html');
-                return;
-            }
-        })();
+        // (La comprobación de sesión y el redirect a inicio.html se hacen en <head>,
+        // antes de pintar el formulario, para evitar el flash del login.)
 
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
