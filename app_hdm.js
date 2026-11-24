@@ -30,7 +30,8 @@
         .data-table-container { background: #FFFFFF; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); border: 1px solid var(--border-color, #e2e8f0); overflow-x: auto; }
         .data-table-container table { width: 100%; border-collapse: collapse; text-align: center; }
         .data-table-container thead { background: var(--light-blue, #eef2ff); border-bottom: 1px solid var(--border-color, #e2e8f0); }
-        .data-table-container th, .data-table-container td { padding: 12px 15px; font-size: 14px; color: var(--text-main, #1e293b); }
+        .data-table-container th { padding: 12px 15px; font-size: 14px; }
+        .data-table-container td { padding: 12px 15px; font-size: 14px; color: var(--text-main, #1e293b); }
         .data-table-container tbody tr { border-bottom: 1px solid #f1f5f9; }
         .btn-edit { background: #10b981; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; gap: 5px; font-size: 13px; margin: 2px; }
         .btn-pdf { background: var(--primary-blue, #043185); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; gap: 5px; font-size: 13px; margin: 2px; }
@@ -196,7 +197,7 @@ const HDM_App = {
                 <div class="user-initial" onclick="document.getElementById('user-dropdown').classList.toggle('show')">${nombre.charAt(0).toUpperCase()}</div>
                 <div class="user-dropdown" id="user-dropdown">
                     <div class="user-card"><div class="user-name">${nombre}</div></div>
-                    <div class="user-actions"><a href="portal_hdm_modificado.html" class="dropdown-link" onclick="localStorage.clear(); sessionStorage.clear();"><i data-lucide="log-out" style="width:16px;"></i> Cerrar sesión</a></div>
+                    <div class="user-actions"><a href="index.html" class="dropdown-link" onclick="localStorage.clear(); sessionStorage.clear();"><i data-lucide="log-out" style="width:16px;"></i> Cerrar sesión</a></div>
                 </div>`;
             if (badge) headerRight.appendChild(badge);
         }
@@ -228,7 +229,9 @@ const HDM_App = {
         tabsContainer.innerHTML = `
             <button class="tab-btn active" onclick="HDM_App.cambiarTab('nuevo')" id="tab-nuevo"><i data-lucide="plus-circle" style="width:16px"></i> Nuevo</button>
             <button class="tab-btn" onclick="HDM_App.cambiarTab('guardados')" id="tab-guardados">Guardados <span class="tab-badge" id="badge-borrador">0</span></button>
-            <button class="tab-btn" onclick="HDM_App.cambiarTab('realizados')" id="tab-realizados">Realizados <span class="tab-badge" id="badge-realizado">0</span></button>`;
+            <button class="tab-btn" onclick="HDM_App.cambiarTab('realizados')" id="tab-realizados">Realizados <span class="tab-badge" id="badge-realizado">0</span></button>
+            <button class="tab-btn" onclick="HDM_App.cambiarTab('aceptados')" id="tab-aceptados">Aceptados <span class="tab-badge" id="badge-aceptado">0</span></button>
+            <button class="tab-btn" onclick="HDM_App.cambiarTab('rechazados')" id="tab-rechazados">Rechazados <span class="tab-badge" id="badge-rechazado">0</span></button>`;
 
         // Crear form-section (envolver contenido existente)
         const formSection = document.createElement('div');
@@ -320,8 +323,6 @@ const HDM_App = {
         // Admin = privilegio '1' o cargo que contenga ADMIN
         const cargo = (localStorage.getItem('hdm_cargo') || '').toUpperCase();
         const esAdmin = privilegio === '1' || cargo.includes('ADMIN');
-        const menuGlobal = document.getElementById('menu-global');
-        if (menuGlobal) menuGlobal.style.display = esAdmin ? 'block' : 'none';
         const menuControles = document.getElementById('menu-controles');
         if (menuControles) menuControles.style.display = esAdmin ? 'block' : 'none';
     },
@@ -385,19 +386,23 @@ const HDM_App = {
         }
         this.actualizarBadges();
         // Si estamos en un tab de dashboard, refrescar la tabla
-        if (this.tabActual === 'guardados' || this.tabActual === 'realizados') this.renderTabla();
+        if (['guardados','realizados','aceptados','rechazados'].includes(this.tabActual)) this.renderTabla();
     },
 
     actualizarBadges() {
-        let b = 0, r = 0;
+        let b = 0, r = 0, ac = 0, re = 0;
         this.reportes.forEach(rep => {
             if (rep.estado === 'Borrador') b++;
             else if (rep.estado === 'Realizado') r++;
+            const ec = rep.estadoControl || 'pendiente';
+            if (ec === 'aceptado') ac++;
+            else if (ec === 'rechazado') re++;
         });
-        const badgeB = document.getElementById('badge-borrador');
-        const badgeR = document.getElementById('badge-realizado');
-        if (badgeB) badgeB.textContent = b;
-        if (badgeR) badgeR.textContent = r;
+        const set = (id, n) => { const el = document.getElementById(id); if (el) el.textContent = n; };
+        set('badge-borrador', b);
+        set('badge-realizado', r);
+        set('badge-aceptado', ac);
+        set('badge-rechazado', re);
     },
 
     cambiarTab(tab) {
@@ -421,23 +426,20 @@ const HDM_App = {
             this.renderTabla();
         }
 
-        // Actualizar links activos del sidebar
+        // Actualizar link activo del sidebar: todos los tabs (nuevo/guardados/realizados/aceptados/rechazados)
+        // pertenecen al mismo cuestionario, así que se resalta el link del cuestionario actual.
         document.querySelectorAll('.sidebar-section .nav-item').forEach(item => item.classList.remove('active'));
-        if (tab === 'guardados') document.getElementById('link-guardados')?.classList.add('active');
-        else if (tab === 'realizados') document.getElementById('link-realizados')?.classList.add('active');
-        else {
-            const tipo = this.getTipoActual();
-            const linkMap = {
-                'correctivo': 'link-correctivo',
-                'instalaciones': 'link-instalaciones',
-                'reporte_visitas': 'link-reporte-visitas',
-                'mantenimiento_1': 'link-mantenimiento-1',
-                'mantenimiento_2': 'link-mantenimiento-2',
-                'mantenimiento_3': 'link-mantenimiento-3',
-                'mantenimiento_4': 'link-mantenimiento-4'
-            };
-            document.getElementById(linkMap[tipo] || '')?.classList.add('active');
-        }
+        const tipo = this.getTipoActual();
+        const linkMap = {
+            'correctivo': 'link-correctivo',
+            'instalaciones': 'link-instalaciones',
+            'reporte_visitas': 'link-reporte-visitas',
+            'mantenimiento_1': 'link-mantenimiento-1',
+            'mantenimiento_2': 'link-mantenimiento-2',
+            'mantenimiento_3': 'link-mantenimiento-3',
+            'mantenimiento_4': 'link-mantenimiento-4'
+        };
+        document.getElementById(linkMap[tipo] || '')?.classList.add('active');
 
         // Cerrar sidebar en móvil
         document.getElementById('sidebar')?.classList.remove('open');
@@ -446,8 +448,15 @@ const HDM_App = {
     renderTabla() {
         const tbody = document.getElementById('tabla-reportes');
         if (!tbody) return;
-        const estadoFiltro = this.tabActual === 'guardados' ? 'Borrador' : 'Realizado';
-        let filtered = this.reportes.filter(r => r.estado === estadoFiltro);
+        const tab = this.tabActual;
+        let filtered;
+        if (tab === 'aceptados') filtered = this.reportes.filter(r => (r.estadoControl || 'pendiente') === 'aceptado');
+        else if (tab === 'rechazados') filtered = this.reportes.filter(r => (r.estadoControl || 'pendiente') === 'rechazado');
+        else if (tab === 'realizados') filtered = this.reportes.filter(r => r.estado === 'Realizado');
+        else filtered = this.reportes.filter(r => r.estado === 'Borrador'); // guardados
+
+        // Ordenar por fecha desc (de la más reciente a la más antigua)
+        filtered = filtered.slice().sort((a, b) => (b.fecha_creacion || '').localeCompare(a.fecha_creacion || ''));
 
         if (filtered.length === 0) {
             tbody.innerHTML = `<tr><td colspan="5" style="padding:30px;color:#64748b">Sin reportes en esta sección</td></tr>`;

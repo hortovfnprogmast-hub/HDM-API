@@ -68,7 +68,7 @@
     function filtrarMenuPorPrivilegio() {
         const cargo = (localStorage.getItem(HDM_KEYS.CARGO) || '').toUpperCase();
         const admin = esAdminHDM();
-        ['menu-global', 'menu-controles'].forEach(function (id) {
+        ['menu-controles'].forEach(function (id) {
             const sec = document.getElementById(id);
             if (sec) sec.style.display = admin ? 'block' : 'none';
         });

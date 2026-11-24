@@ -61,7 +61,7 @@
         .btn-pdf { background: var(--primary-blue); }
         .btn-view { background: #64748b; }
         .btn:disabled { opacity: 0.4; cursor: not-allowed; }
-        #custom-confirm, #custom-alert, #custom-data { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); z-index: 10001; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
+        #custom-confirm, #custom-alert, #custom-data, #custom-control { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); z-index: 10001; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
         #custom-alert { z-index: 10000; }
         .modal-card { background: white; border-radius: 12px; padding: 24px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
         .modal-card.large { max-width: 700px; max-height: 80vh; overflow-y: auto; text-align: left; }
@@ -72,6 +72,9 @@
         #confirm-cancel, #alert-btn { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; background: #f8fafc; color: #334155; font-weight: 700; font-size: 14px; cursor: pointer; }
         #confirm-ok { flex: 1; padding: 12px; border-radius: 8px; border: none; color: white; background: var(--danger); font-weight: 700; font-size: 14px; cursor: pointer; }
         #alert-btn { background: var(--primary-blue); color: white; border: none; }
+        #control-accept { flex: 1; padding: 12px; border-radius: 8px; border: none; color: white; background: var(--success); font-weight: 700; font-size: 14px; cursor: pointer; }
+        #control-reject { flex: 1; padding: 12px; border-radius: 8px; border: none; color: white; background: var(--danger); font-weight: 700; font-size: 14px; cursor: pointer; }
+        #control-cancel { margin-top: 10px; width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; background: #f8fafc; color: #334155; font-weight: 700; font-size: 13px; cursor: pointer; }
         .data-viewer { font-size: 13px; line-height: 1.6; }
         .data-viewer .dv-row { padding: 6px 0; border-bottom: 1px solid #f1f5f9; }
         .data-viewer .dv-label { color: var(--text-muted); font-weight: 600; }
@@ -146,6 +149,19 @@
             <h3 id="data-title" style="margin-top:0">Detalle del reporte</h3>
             <div id="data-body" class="data-viewer"></div>
             <div style="text-align:center; margin-top:18px;"><button id="data-close" class="btn btn-pdf" onclick="document.getElementById('custom-data').style.display='none'">Cerrar</button></div>
+        </div>
+    </div>
+
+    <div id="custom-control">
+        <div class="modal-card">
+            <div class="confirm-icon" style="background:#e0e7ff;color:var(--primary-blue)"><i data-lucide="shield-check" style="width:28px;height:28px"></i></div>
+            <h3 id="control-title" style="margin:0 0 8px 0;font-size:18px;color:var(--text-main);font-weight:700">Control del reporte</h3>
+            <p id="control-msg" style="margin:0 0 24px 0;font-size:14px;color:var(--text-muted);line-height:1.5"></p>
+            <div class="confirm-actions">
+                <button id="control-reject"><i data-lucide="x" style="width:14px"></i> Rechazar</button>
+                <button id="control-accept"><i data-lucide="check" style="width:14px"></i> Aceptar</button>
+            </div>
+            <button id="control-cancel">Cerrar</button>
         </div>
     </div>
 
@@ -241,8 +257,16 @@
                 actualizarStats();
                 renderTabla();
             } catch (e) {
-                tbody.innerHTML = '<tr><td colspan="7" class="loading">Error al cargar: ' + (e.message || e) + '</td></tr>';
-                console.error(e);
+                console.error('cargarReportes:', e);
+                // Fallback a caché local si Firebase no está disponible
+                const local = JSON.parse(localStorage.getItem('hdm_reportes') || '[]').filter(r => r.tipo === TIPO_ACTUAL);
+                todosReportes = local.map(r => Object.assign({ estadoControl: r.estadoControl || 'pendiente' }, r));
+                todosReportes.sort((a, b) => (b.fecha_creacion || '').localeCompare(a.fecha_creacion || ''));
+                actualizarStats();
+                renderTabla();
+                if (todosReportes.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="loading">Sin reportes (Firebase no disponible y sin caché local).</td></tr>';
+                }
             }
         }
 
@@ -280,11 +304,9 @@
                 const ec = r.estadoControl || 'pendiente';
                 const estRep = r.estado || 'Borrador';
                 const acciones = '<div style="display:flex;gap:4px;justify-content:center;flex-wrap:wrap">'
-                    + (ec !== 'aceptado' ? '<button class="btn btn-accept" onclick="accionControl(\'' + r.id + '\',\'aceptado\')"><i data-lucide="check" style="width:14px"></i> Aceptar</button>' : '')
-                    + (ec !== 'rechazado' ? '<button class="btn btn-reject" onclick="accionControl(\'' + r.id + '\',\'rechazado\')"><i data-lucide="x" style="width:14px"></i> Rechazar</button>' : '')
-                    + '<button class="btn btn-view" onclick="verDetalle(\'' + r.id + '\')"><i data-lucide="eye" style="width:14px"></i> Ver</button>'
+                    + (tipoInfo.pdf ? '<button class="btn btn-pdf" onclick="verPDF(\'' + r.id + '\')"><i data-lucide="file-text" style="width:14px"></i> Ver PDF</button>' : '')
+                    + '<button class="btn btn-view" onclick="showControlChoice(\'' + r.id + '\')"><i data-lucide="shield-check" style="width:14px"></i> Aceptar/Rechazar</button>'
                     + (tipoInfo.cuest ? '<a class="btn btn-edit" href="' + tipoInfo.cuest + '?tab=nuevo&edit=' + r.id + '"><i data-lucide="edit-2" style="width:14px"></i> Editar</a>' : '')
-                    + (tipoInfo.pdf ? '<button class="btn btn-pdf" onclick="verPDF(\'' + r.id + '\')"><i data-lucide="file-text" style="width:14px"></i> PDF</button>' : '')
                     + '</div>';
                 const tr = document.createElement('tr');
                 tr.innerHTML = '<td style="font-weight:bold">' + (r.folio || '—') + '</td>'
@@ -299,19 +321,29 @@
             if (window.lucide) lucide.createIcons();
         }
 
-        async function accionControl(id, estadoControl) {
+        function showControlChoice(id) {
             const r = todosReportes.find(x => x.id === id);
             if (!r) return;
-            const verbo = estadoControl === 'aceptado' ? 'aceptar' : 'rechazar';
+            const ec = r.estadoControl || 'pendiente';
+            document.getElementById('control-title').innerText = 'Control — ' + (r.folio || 'reporte');
+            document.getElementById('control-msg').innerText = 'Estado actual: ' + ec + '.\nElige una acción para este reporte:';
+            const modal = document.getElementById('custom-control');
+            modal.style.display = 'flex';
+            if (window.lucide) lucide.createIcons();
+            document.getElementById('control-accept').onclick = function () { modal.style.display = 'none'; ejecutarControl(id, 'aceptado'); };
+            document.getElementById('control-reject').onclick = function () { modal.style.display = 'none'; ejecutarControl(id, 'rechazado'); };
+            document.getElementById('control-cancel').onclick = function () { modal.style.display = 'none'; };
+        }
+
+        async function ejecutarControl(id, estadoControl) {
+            const r = todosReportes.find(x => x.id === id);
+            if (!r) return;
             const msg = estadoControl === 'aceptado'
                 ? 'El reporte ' + (r.folio || '') + ' se marcará como ACEPTADO y quedará registrado.'
                 : 'El reporte ' + (r.folio || '') + ' se RECHAZARÁ y regresará al usuario para que lo edite.';
-            showConfirm('¿' + verbo.charAt(0).toUpperCase() + verbo.slice(1) + ' reporte?', msg, async () => {
+            showConfirm('¿' + (estadoControl === 'aceptado' ? 'Aceptar' : 'Rechazar') + ' reporte?', msg, async () => {
                 try {
-                    if (window.HDM_Firebase && HDM_Firebase.isReady()) {
-                        await HDM_Firebase.actualizarEstadoControl(id, estadoControl);
-                    }
-                    // Actualizar local
+                    // 1. Actualizar local primero (feedback inmediato + resiliente ante caída de Firebase)
                     r.estadoControl = estadoControl;
                     const local = JSON.parse(localStorage.getItem('hdm_reportes') || '[]');
                     const idx = local.findIndex(x => x.id === id);
@@ -319,6 +351,11 @@
                     actualizarStats();
                     renderTabla();
                     showAlert('Listo', 'Reporte ' + (estadoControl === 'aceptado' ? 'aceptado' : 'rechazado') + ' correctamente.');
+                    // 2. Sincronizar con Firestore (best-effort; no bloquea el feedback local)
+                    if (window.HDM_Firebase && HDM_Firebase.isReady()) {
+                        try { await HDM_Firebase.actualizarEstadoControl(id, estadoControl); }
+                        catch (e2) { console.warn('Sincronización Firebase:', e2 && e2.message); }
+                    }
                 } catch (e) {
                     showAlert('Error', 'No se pudo actualizar: ' + (e.message || e));
                 }
