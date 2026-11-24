@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Realizados Global | HDM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="hdm-common.js"></script>
+    <style>
+        :root { --primary-blue: #043185; --light-blue: #eef2ff; --bg-color: #f8fafc; --text-main: #1e293b; --text-muted: #64748b; --border-color: #e2e8f0; --danger: #dc2626; --success: #10b981; }
+        body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--bg-color); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background: white; border-bottom: 3px solid var(--primary-blue); z-index: 50; }
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .menu-btn { background: none; border: none; cursor: pointer; color: var(--text-main); }
+        .menu-btn i { width: 24px; height: 24px; }
+        .header-title { margin: 0; font-size: 15px; font-weight: 700; color: var(--primary-blue); }
+        .header-right { display: flex; align-items: center; gap: 12px; }
+        .user-name-top { font-weight: 800; color: var(--primary-blue); font-size: 14px; text-transform: uppercase; white-space: nowrap; }
+        @media (max-width: 768px) { .user-name-top { display: none; } .header-title { display: none; } }
+        .user-initial { width: 35px; height: 35px; border-radius: 50%; background-color: var(--primary-blue); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; }
+        .user-dropdown { position: absolute; top: 60px; right: 15px; background: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border: 1px solid var(--border-color); width: 220px; z-index: 1000; display: none; overflow: hidden; }
+        .user-dropdown.show { display: block; }
+        .user-card { padding: 15px; border-bottom: 1px solid #f1f5f9; }
+        .user-card .user-name { font-weight: 700; font-size: 14px; color: var(--text-main); }
+        .user-actions .dropdown-link { display: flex; align-items: center; gap: 8px; padding: 12px 15px; color: var(--danger); font-size: 14px; text-decoration: none; font-weight: 500; }
+        .main-layout { display: flex; flex: 1; overflow: hidden; height: calc(100vh - 63px); }
+        .sidebar { width: 260px; background: white; border-right: 1px solid var(--border-color); overflow-y: auto; transition: transform 0.3s ease; display: flex; flex-direction: column; flex-shrink: 0; }
+        @media (max-width: 768px) { .sidebar { position: fixed; height: calc(100vh - 63px); transform: translateX(-100%); z-index: 40; top: 63px; } .sidebar.open { transform: translateX(0); } }
+        .content { flex: 1; padding: 20px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        .container { max-width: 1200px; margin: 0 auto; padding-bottom: 80px; }
+        .global-filters { background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); border: 1px solid var(--border-color); display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        .global-filters input { padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px; outline: none; transition: all 0.2s; }
+        .global-filters input:focus { border-color: var(--primary-blue); box-shadow: 0 0 0 3px rgba(4,49,133,0.1); }
+        .data-table-container { background: #FFFFFF; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); border: 1px solid var(--border-color); overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: center; }
+        thead { background: var(--light-blue); border-bottom: 1px solid var(--border-color); }
+        th, td { padding: 12px 15px; font-size: 14px; color: var(--text-main); }
+        th { font-weight: 700; color: var(--primary-blue); text-transform: uppercase; font-size: 12px; }
+        tbody tr { border-bottom: 1px solid #f1f5f9; }
+        tbody tr:hover { background: var(--light-blue); }
+        .tipo-badge { padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; }
+        .btn-edit { background: var(--success); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; gap: 5px; font-size: 13px; margin: 2px; text-decoration: none; }
+        .btn-pdf { background: var(--primary-blue); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; gap: 5px; font-size: 13px; margin: 2px; }
+        .fab-delete { position: fixed; bottom: 30px; right: 30px; background: var(--danger); color: white; border: none; border-radius: 50px; padding: 15px 25px; display: flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 999; font-weight: 700; font-family: 'Inter', sans-serif; font-size: 14px; transition: transform 0.2s; }
+        .fab-delete:hover { background: #b91c1c; transform: scale(1.05); }
+        #custom-confirm { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); z-index: 10001; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
+        .modal-card-confirm { background: white; border-radius: 12px; padding: 24px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+        .confirm-icon { width: 50px; height: 50px; background: #fee2e2; color: var(--danger); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto; }
+        #confirm-title { margin: 0 0 8px 0; font-size: 18px; color: var(--text-main); font-weight: 700; }
+        #confirm-msg { margin: 0 0 24px 0; font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+        .confirm-actions { display: flex; gap: 12px; }
+        #confirm-cancel { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; background: #f8fafc; color: #334155; font-weight: 700; font-size: 14px; cursor: pointer; }
+        #confirm-ok { flex: 1; padding: 12px; border-radius: 8px; border: none; color: white; background: var(--danger); font-weight: 700; font-size: 14px; cursor: pointer; }
+        #custom-alert { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); z-index: 10000; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
+        .modal-card-alert { background: white; border-radius: 12px; padding: 24px; width: 100%; max-width: 400px; text-align: center; }
+        #alert-title { margin: 0 0 8px 0; font-size: 18px; color: var(--text-main); font-weight: 700; }
+        #alert-msg { margin: 0 0 24px 0; font-size: 14px; color: var(--text-muted); }
+        #alert-btn { width: 100%; padding: 12px; border-radius: 8px; border: none; color: white; background: var(--primary-blue); font-weight: 700; font-size: 14px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <button class="menu-btn" id="toggle-menu"><i data-lucide="menu"></i></button>
+            <img src="https://i.ibb.co/217VSVMh/logo-hdm.png" alt="Logo HDM" style="height: 40px; object-fit: contain;">
+            <h1 class="header-title">Realizados Global</h1>
+        </div>
+        <div class="header-right">
+            <span class="user-name-top" id="header-username">Usuario</span>
+            <div class="user-initial" id="user-initial" onclick="document.getElementById('user-dropdown').classList.toggle('show')">U</div>
+            <div class="user-dropdown" id="user-dropdown">
+                <div class="user-card"><div class="user-name" id="user-dropdown-name">Usuario</div></div>
+                <div class="user-actions"><a href="portal_hdm_modificado.html" class="dropdown-link" onclick="localStorage.clear(); sessionStorage.clear();"><i data-lucide="log-out" style="width:16px;"></i> Cerrar sesión</a></div>
+            </div>
+        </div>
+    </header>
+    <div class="main-layout">
+        <aside class="sidebar" id="sidebar"></aside>
+        <main class="content">
+            <div class="container">
+                <div class="global-filters">
+                    <input type="text" id="filter-text" placeholder="Buscar por folio, dirección, tipo..." style="flex: 1; min-width: 200px;">
+                    <input type="date" id="filter-date">
+                </div>
+                <div class="data-table-container">
+                    <table>
+                        <thead><tr><th style="width:40px;"><input type="checkbox" id="check-all" onclick="toggleAll(this)"></th><th>Folio</th><th>Tipo</th><th>Dirección</th><th>Fecha</th><th>Acción</th></tr></thead>
+                        <tbody id="tabla-reportes"><tr><td colspan="6" style="padding: 30px; color: var(--text-muted);">Cargando...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    <button class="fab-delete" onclick="eliminarSeleccionados()"><i data-lucide="trash-2" style="width: 20px; height: 20px;"></i> Eliminar</button>
+    <div id="custom-confirm">
+        <div class="modal-card-confirm">
+            <div class="confirm-icon"><i data-lucide="alert-triangle" style="width: 28px; height: 28px;"></i></div>
+            <h3 id="confirm-title">¿Eliminar?</h3>
+            <p id="confirm-msg">¿Seguro que deseas eliminar los elementos seleccionados?</p>
+            <div class="confirm-actions"><button id="confirm-cancel">Cancelar</button><button id="confirm-ok">Eliminar</button></div>
+        </div>
+    </div>
+    <div id="custom-alert">
+        <div class="modal-card-alert">
+            <h3 id="alert-title"></h3>
+            <p id="alert-msg"></p>
+            <button id="alert-btn" onclick="document.getElementById('custom-alert').style.display='none'">Aceptar</button>
+        </div>
+    </div>
+    <script src="firebase-hdm.js"></script>
+    <script>
+        // ====== HDM_Store (localStorage) ======
+        const HDM_Store = {
+            KEY: 'hdm_reportes',
+            obtenerTodos() { try { return JSON.parse(localStorage.getItem(this.KEY) || '[]'); } catch(e) { return []; } },
+            obtenerPorId(id) { return this.obtenerTodos().find(r => r.id === id); },
+            eliminarMultiples(ids) { localStorage.setItem(this.KEY, JSON.stringify(this.obtenerTodos().filter(r => !ids.includes(r.id)))); }
+        };
+
+        // ====== Mapa de tipos ======
+        const TIPO_MAP = {
+            'correctivo': { cuest: 'correctivo.html', pdf: 'pdf_formato_correctivo_o_emergencia.html', label: 'Correctivo', color: '#4f46e5' },
+            'instalaciones': { cuest: 'instalaciones.html', pdf: 'pdf_formato_instalaciones.html', label: 'Instalación', color: '#f97316' },
+            'reporte_visitas': { cuest: 'reporte_visitas.html', pdf: 'pdf_formato_reporte_visitas.html', label: 'Reporte Visita', color: '#64748b' },
+            'mantenimiento_1': { cuest: 'mantenimiento_1.html', pdf: 'pdf_formato_mantenimiento_1.html', label: 'Mantenimiento 1', color: '#0d9488' },
+            'mantenimiento_2': { cuest: 'mantenimiento_2.html', pdf: 'pdf_formato_mantenimiento_2.html', label: 'Mantenimiento 2', color: '#0d9488' },
+            'mantenimiento_3': { cuest: 'mantenimiento_3.html', pdf: 'pdf_formato_mantenimiento_3.html', label: 'Mantenimiento 3', color: '#0d9488' },
+            'mantenimiento_4': { cuest: 'mantenimiento_4.html', pdf: 'pdf_formato_mantenimiento_4.html', label: 'Mantenimiento 4', color: '#0d9488' }
+        };
+
+        const ESTADO_FILTRO = 'Realizado';
+        let todosReportes = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const nombre = localStorage.getItem('hdm_nombre') || localStorage.getItem('nombre') || 'Usuario';
+            document.getElementById('header-username').innerText = nombre;
+            document.getElementById('user-initial').innerText = nombre.charAt(0).toUpperCase();
+            document.getElementById('user-dropdown-name').innerText = nombre;
+
+            fetch('menu_hdm.html?v=' + Date.now()).then(res => res.text()).then(html => {
+                document.getElementById('sidebar').innerHTML = html;
+                document.getElementById('link-global-realizados')?.classList.add('active');
+                if (typeof filtrarMenuPorPrivilegio === 'function') filtrarMenuPorPrivilegio();
+                lucide.createIcons();
+            });
+
+            document.getElementById('toggle-menu').addEventListener('click', () => document.getElementById('sidebar').classList.toggle('open'));
+            window.addEventListener('click', (e) => { if (!e.target.matches('#user-initial') && !e.target.closest('.user-dropdown')) { const dd = document.getElementById('user-dropdown'); if (dd.classList.contains('show')) dd.classList.remove('show'); } });
+            document.getElementById('filter-text').addEventListener('input', renderTabla);
+            document.getElementById('filter-date').addEventListener('change', renderTabla);
+
+            cargarReportes();
+            lucide.createIcons();
+        });
+
+        function showAlert(t, m) { document.getElementById('alert-title').innerText = t; document.getElementById('alert-msg').innerText = m; document.getElementById('custom-alert').style.display = 'flex'; }
+        function showConfirm(title, msg, onConfirm) {
+            document.getElementById('confirm-title').innerText = title;
+            document.getElementById('confirm-msg').innerText = msg;
+            document.getElementById('custom-confirm').style.display = 'flex';
+            lucide.createIcons();
+            document.getElementById('confirm-ok').onclick = function() { document.getElementById('custom-confirm').style.display = 'none'; onConfirm(); };
+            document.getElementById('confirm-cancel').onclick = function() { document.getElementById('custom-confirm').style.display = 'none'; };
+        }
+
+        async function cargarReportes() {
+            const tbody = document.getElementById('tabla-reportes');
+            if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="padding:30px;color:var(--text-muted)">Cargando desde Firestore...</td></tr>';
+            try {
+                if (window.HDM_Firebase) { if (!HDM_Firebase.isReady()) await HDM_Firebase.ready; }
+                if (window.HDM_Firebase && HDM_Firebase.isReady()) {
+                    todosReportes = await HDM_Firebase.listarTodos({ estado: ESTADO_FILTRO });
+                } else {
+                    todosReportes = HDM_Store.obtenerTodos().filter(r => r.estado === ESTADO_FILTRO);
+                }
+            } catch (e) {
+                console.warn('Firestore fallback:', e);
+                todosReportes = HDM_Store.obtenerTodos().filter(r => r.estado === ESTADO_FILTRO);
+            }
+            todosReportes.sort((a,b) => (b.fecha_creacion || '').localeCompare(a.fecha_creacion || ''));
+            renderTabla();
+        }
+
+        function toggleAll(source) { document.querySelectorAll('.check-rep').forEach(cb => cb.checked = source.checked); }
+
+        function renderTabla() {
+            const t = document.getElementById('tabla-reportes');
+            const searchText = document.getElementById('filter-text')?.value.toLowerCase() || '';
+            const filterDate = document.getElementById('filter-date')?.value || '';
+            let filtered = todosReportes.filter(r => {
+                if (searchText) { const text = `${r.folio} ${r.direccion} ${r.tipo} ${r.usuario_nombre}`.toLowerCase(); if (!text.includes(searchText)) return false; }
+                if (filterDate) { if (!r.fecha_creacion || !r.fecha_creacion.startsWith(filterDate)) return false; }
+                return true;
+            });
+            if (filtered.length === 0) { t.innerHTML = `<tr><td colspan="6" style="padding:30px;color:var(--text-muted)">Sin reportes realizados</td></tr>`; return; }
+            t.innerHTML = '';
+            filtered.forEach(r => {
+                const tipoInfo = TIPO_MAP[r.tipo] || { cuest: '', pdf: '', label: r.tipo || 'Desconocido', color: '#64748b' };
+                const acciones = `<div style="display:flex;gap:5px;justify-content:center;">
+                    <a href="${tipoInfo.cuest}?tab=nuevo&edit=${r.id}" class="btn-edit"><i data-lucide="edit-2" style="width:14px"></i> Editar</a>
+                    <button type="button" onclick="verPDFReporte('${r.id}')" class="btn-pdf"><i data-lucide="file-text" style="width:14px"></i> PDF</button>
+                </div>`;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td><input type="checkbox" class="check-rep" data-id="${r.id}"></td>
+                    <td style="font-weight:bold">${r.folio || '—'}</td>
+                    <td><span class="tipo-badge" style="background:${tipoInfo.color}20;color:${tipoInfo.color}">${tipoInfo.label}</span></td>
+                    <td>${r.direccion || '—'}</td>
+                    <td>${(r.fecha_creacion || '').split('T')[0] || '—'}</td>
+                    <td>${acciones}</td>`;
+                t.appendChild(tr);
+            });
+            lucide.createIcons();
+        }
+
+        async function verPDFReporte(id) {
+            let r = todosReportes.find(x => x.id === id);
+            if (!r && window.HDM_Firebase && HDM_Firebase.isReady()) {
+                try { r = await HDM_Firebase.obtenerReporte(id); } catch (e) {}
+            }
+            if (!r) r = HDM_Store.obtenerPorId(id);
+            if (!r || !r.data) { showAlert('Error', 'Reporte no encontrado.'); return; }
+            const tipoInfo = TIPO_MAP[r.tipo];
+            if (!tipoInfo || !tipoInfo.pdf) { showAlert('Error', 'Tipo de reporte desconocido.'); return; }
+            try {
+                sessionStorage.setItem('DatosCuestionarioHDM', JSON.stringify(r.data));
+                window.open(tipoInfo.pdf, '_blank');
+            } catch(e) { showAlert('Error', 'No se pudo abrir el PDF: ' + e.message); }
+        }
+
+        function eliminarSeleccionados() {
+            const checks = document.querySelectorAll('.check-rep:checked');
+            if (checks.length === 0) { showConfirm('Atención', 'Selecciona al menos un reporte para eliminar.', () => {}); return; }
+            showConfirm(`Eliminar ${checks.length} reporte(s)`, 'Esta acción no se puede deshacer. ¿Deseas continuar?', async () => {
+                const ids = Array.from(checks).map(c => c.dataset.id);
+                for (const id of ids) {
+                    try { if (window.HDM_Firebase && HDM_Firebase.isReady()) await HDM_Firebase.eliminar(id); } catch (e) { console.warn('Eliminar FS:', e); }
+                }
+                HDM_Store.eliminarMultiples(ids);
+                showAlert('Éxito', 'Reportes eliminados.');
+                cargarReportes();
+            });
+        }
+    </script>
+</body>
+</html>
