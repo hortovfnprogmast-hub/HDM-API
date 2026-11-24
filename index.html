@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+    <title>Portal Operativo - HDM</title>
+    
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#005B9A", 
+                        "primary-dark": "#004575",
+                        "surface": "#FFFFFF",
+                        "text-main": "#1E293B",
+                        "text-sub": "#64748B",
+                    },
+                    fontFamily: { sans: ["Inter", "sans-serif"] },
+                    boxShadow: { 'premium': '0 10px 25px -5px rgba(0, 0, 0, 0.04), 0 8px 10px -6px rgba(0, 0, 0, 0.04)' }
+                },
+            },
+        };
+    </script>
+
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: linear-gradient(135deg, #0084CA 0%, #005B9A 100%); 
+            background-attachment: fixed; 
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center justify-center p-4 antialiased">
+    
+    <div class="w-full max-w-[420px] bg-surface rounded-2xl shadow-premium border border-slate-100 overflow-hidden relative">
+        <div class="p-6 sm:p-8">
+            
+            <div class="flex flex-col items-center mb-6">
+                <img src="https://i.ibb.co/rCsz6hh/LOGOTIPO.png" alt="Logo HDM" class="mb-4 object-contain h-20"> 
+                <h1 class="text-2xl font-semibold text-text-main tracking-tight">Portal Operativo</h1>
+                <p class="text-[13px] text-text-sub mt-1 text-center">Sistemas de Filtración de Agua SA. de C.V.</p>
+            </div>
+            
+            <form id="loginForm" class="space-y-5 block">
+                <div class="space-y-1.5">
+                    <label class="text-[13px] font-medium text-slate-700 ml-0.5" for="username">No. de Empleado</label>
+                    <div class="relative flex items-center">
+                        <span class="material-symbols-outlined absolute left-4 text-slate-400 text-xl">badge</span>
+                        <input required autocomplete="username" class="block w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-text-main placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm uppercase" id="username" placeholder="Ej. EJBM" type="text">
+                    </div>
+                </div>
+                
+                <div class="space-y-1.5">
+                    <label class="text-[13px] font-medium text-slate-700 ml-0.5" for="password">Contraseña</label>
+                    <div class="relative flex items-center">
+                        <span class="material-symbols-outlined absolute left-4 text-slate-400 text-xl">lock</span>
+                        <input required autocomplete="current-password" class="block w-full pl-12 pr-12 py-3 bg-slate-50 border border-slate-200 rounded-lg text-text-main placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm" id="password" placeholder="••••••••" type="password">
+                        <button class="absolute right-4 flex items-center text-slate-400 hover:text-primary transition-colors" onclick="togglePassword()" type="button">
+                            <span class="material-symbols-outlined text-xl" id="toggleIcon">visibility_off</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="alertMessage" class="hidden py-2.5 px-3 bg-red-50 border border-red-200 text-red-600 text-[13px] font-medium rounded-lg text-center transition-all"></div>
+                
+                <div class="space-y-3 pt-2">
+                    <button id="submitBtn" class="w-full flex justify-center items-center py-3.5 px-4 rounded-lg text-sm font-semibold text-white bg-primary hover:bg-primary-dark shadow-md transition-all active:scale-[0.98]" type="submit">
+                        INICIAR SESIÓN
+                    </button>
+                    
+                    <button type="button" onclick="window.top.location.href='https://hdmordendeservicios-cloud.github.io/evaluacion/'" class="w-full flex justify-center items-center py-3.5 px-4 rounded-lg text-sm font-semibold text-white bg-red-600 hover:bg-red-700 shadow-md transition-all active:scale-[0.98]">
+                        EVALUACIÓN DE UN TRABAJO
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+    
+    <div class="mt-6 mb-4 text-center">
+        <p class="text-[11px] font-medium uppercase tracking-widest text-white/70">
+            © 2026 HDM MÉXICO. Todos los derechos reservados.
+        </p>
+    </div>
+
+    <script>
+        // 🔴🔴 PEGA AQUÍ TU ENLACE DE GOOGLE APPS SCRIPT 🔴🔴
+        const API_URL = "https://script.google.com/macros/s/AKfycbw-2aFfgaRuLW74QTMFyO_WVLfPA89TJZN7C-B5N5_MUexsAlV6po-5Q2OS8GgTeuoibA/exec";
+
+        // === Configuración de URLs de los servicios (se usa también en inicio.html) ===
+        const URL_MAP = {
+            'ServicioCorrectivo': 'https://docs.google.com/forms/d/e/1FAIpQLSexALVRaCItCODgce3_1U-sfRaMAQq365o57xIJvikpNMc40A/viewform?usp=pp_url&entry.833549862=HDM-0',
+            'ServicioInstalaciones': 'https://docs.google.com/forms/d/e/1FAIpQLSczsSDydxhwDe6Up62D0dd3R6DZND5wQ1nvgySBAXkNm0fTNA/viewform?usp=pp_url&entry.1407249899=HDM-0',
+            'ServicioMantenimiento': 'https://docs.google.com/forms/d/e/1FAIpQLSdAWJ86UbY8cWq76Lzv3AJjfgkQp6JyNe7lClGYa9JePJ4jmw/viewform?usp=pp_url&entry.1296392221=HDM-0',
+            'ServicioReporteVisita': 'https://docs.google.com/forms/d/e/1FAIpQLSfj6ZjnKHhc3h-HGGj2q7HcRTuYOcLvQnMws8K3998V5hh_cQ/viewform?usp=pp_url&entry.1483243805=HDM-0',
+            'RegistroQR': 'https://hdmordendeservicios-cloud.github.io/hdm/'
+        };
+
+        async function apiCall(action, params = {}) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: action, ...params })
+                });
+                return await response.json();
+            } catch (error) { return { status: 'error' }; }
+        }
+
+        function togglePassword() {
+            const p = document.getElementById('password');
+            const i = document.getElementById('toggleIcon');
+            if (p.type === 'password') { p.type = 'text'; i.textContent = 'visibility'; } 
+            else { p.type = 'password'; i.textContent = 'visibility_off'; }
+        }
+
+        // === Si ya hay sesión activa, ir directo a inicio.html ===
+        (function() {
+            const nombreGuardado = localStorage.getItem('hdm_nombre');
+            if (nombreGuardado) {
+                window.location.replace('inicio.html');
+                return;
+            }
+        })();
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const alertMsg = document.getElementById('alertMessage');
+            const u = document.getElementById('username').value.trim();
+            const p = document.getElementById('password').value.trim();
+
+            alertMsg.classList.add('hidden');
+            btn.innerText = 'VERIFICANDO CREDENCIALES...';
+            btn.disabled = true;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+
+            const res = await apiCall('getEmployeeData', { username: u, password: p });
+
+            if (res.status === 'success' && res.esValido) {
+                // === Guardar datos del usuario en localStorage para que inicio.html los lea ===
+                const cargo = (res.position || '').toUpperCase();
+                // Determinar privilegio de administrador: la respuesta de Apps Script puede
+                // traerlo como res.privilegio, res.isAdmin, res.admin o res.rol; si no lo trae,
+                // se infiere por cargo (ADMIN/ADMINISTRADOR). Esto habilita la sección Controles.
+                const esAdmin = res.privilegio === '1' || res.privilegio === 1
+                    || res.isAdmin === true || res.admin === true
+                    || (res.rol || res.role || '').toString().toUpperCase().includes('ADMIN')
+                    || cargo.includes('ADMIN');
+                localStorage.setItem('hdm_nombre', res.name);
+                localStorage.setItem('hdm_cargo', res.position || '');
+                localStorage.setItem('hdm_username', u);
+                localStorage.setItem('hdm_usuario', u);          // alias de compatibilidad
+                localStorage.setItem('hdm_privilegio', esAdmin ? '1' : '0');
+                localStorage.setItem('hdm_folio', '');
+                localStorage.setItem('hdm_branch', res.branch || '');
+                // Redirigir al panel con menú lateral
+                window.location.href = 'inicio.html';
+            } else {
+                alertMsg.innerText = "Usuario o contraseña incorrectos.";
+                alertMsg.classList.remove('hidden');
+                btn.innerText = 'INICIAR SESIÓN';
+                btn.disabled = false;
+                btn.classList.remove('opacity-75', 'cursor-not-allowed');
+            }
+        });
+    </script>
+</body>
+</html>
