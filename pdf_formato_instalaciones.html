@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orden de Servicio Instalación</title>
+    <style>
+        @page { size: A4; margin: 0; }
+        * { box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; font-size: 9px; margin: 0; padding: 0; background-color: #555; }
+        .page { width: 210mm; height: 297mm; background: white; margin: 20px auto; padding: 10mm 15mm; position: relative; box-shadow: 0 0 10px rgba(0,0,0,0.5); page-break-after: always; display: flex; flex-direction: column; }
+        .content-wrapper { flex-grow: 1; display: flex; flex-direction: column; }
+        .text-blue { color: #043185; }
+        .bg-blue { background-color: #043185; color: white; }
+        .bold { font-weight: bold; }
+        .text-center { text-align: center; }
+        input[type="radio"] { accent-color: #043185; margin: 0 4px 0 0; width: 10px; height: 10px; }
+        .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
+        .radios-left { font-size: 8px; line-height: 1.2; display: flex; flex-direction: column; gap: 2px;}
+        .radios-left div { display: flex; align-items: center; }
+        .main-title { flex-grow: 1; text-align: center; font-size: 14px; font-weight: bold; color: #043185; line-height: 1.2; padding-top: 5px; }
+        .main-title span { font-weight: normal; }
+        .info-block { border-top: 4px solid #043185; border-bottom: 4px solid #043185; padding: 5px 0; display: flex; justify-content: space-between; align-items: stretch; margin-bottom: 2px; }
+        .provider-box { display: flex; width: 38%; border: 1px solid black; }
+        .provider-left-blank { width: 60px; border-right: 1px solid black; background-color: #fff;}
+        .provider-content { flex-grow: 1; }
+        .provider-title { font-size: 8px; padding: 3px; font-weight: bold; display: flex; align-items: center; border-bottom: 1px solid black;}
+        .provider-fields { padding: 3px; font-size: 8px; line-height: 1.6; }
+        .provider-fields div { display: flex; align-items: center; }
+        .logo-box { width: 28%; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .company-info { width: 34%; text-align: right; font-size: 8.5px; line-height: 1.4; display: flex; flex-direction: column; justify-content: center; color: black; font-weight: normal; }
+        .section-title { text-align: center; color: #043185; font-weight: bold; font-size: 11px; margin: 4px 0; text-transform: uppercase; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 5px; font-size: 7.5px; }
+        th, td { border: 1px solid black; text-align: left; padding: 2px 4px; }
+        th { background-color: #043185; color: white; text-align: center; font-weight: bold; text-transform: uppercase; }
+        td { height: 14px; }
+        .photo-grid { display: flex; gap: 8px; margin-bottom: 6px; }
+        .photo-box { flex: 1; border: 1px solid black; display: flex; flex-direction: column; height: 135px; }
+        .photo-empty { flex-grow: 1; }
+        .photo-label { background-color: #043185; color: white; text-align: center; font-size: 7px; padding: 3px; font-weight: bold; text-transform: uppercase;}
+        .photo-input { height: 18px; border-top: 1px solid black; background-color: white; }
+        .bottom-line { border-top: 6px solid #043185; margin-top: auto; }
+        .footer-section { margin-top: auto; margin-bottom: 5px;}
+        .footer-title { display: flex; align-items: center; font-size: 10px; padding: 3px 5px; margin-bottom: 8px; font-weight: bold;}
+        .footer-grid { display: flex; gap: 10px; height: 110px; }
+        .footer-blank { width: 32%; border: 1px solid black; }
+        .footer-col-middle { width: 44%; display: flex; flex-direction: column; gap: 8px; }
+        .footer-col-right { width: 24%; display: flex; flex-direction: column; gap: 8px; }
+        .box-container { border: 1px solid black; flex: 1; display: flex; flex-direction: column; }
+        .box-header { padding: 3px 5px; font-size: 8px; font-weight: bold; display: flex; align-items: center; border-bottom: 1px solid black;}
+        .box-body { flex: 1; padding: 5px; font-size: 8px; line-height: 1.6;}
+        .box-body div { display: flex; align-items: center; }
+        @media print { body { background-color: white; } .page { margin: 0; box-shadow: none; border: none; width: 100%; height: 100%; } }
+    </style>
+</head>
+<body>
+
+<!-- ==================== HOJA 1 ==================== -->
+<div class="page">
+    <div class="content-wrapper">
+        <div class="header-top">
+            <div class="radios-left text-blue">
+                <div style="background-color: #043185; width: 20px; height: 10px; margin-bottom:2px; display:flex; justify-content:center; align-items:center; color:white; font-weight:bold; font-size:10px;">-</div>
+                <div><input type="radio" checked> Dirección:</div>
+                <div><input type="radio" checked> Colonia:</div>
+                <div><input type="radio" checked> </div>
+                <div><input type="radio" checked> </div>
+                <div><input type="radio" checked> </div>
+            </div>
+            <div class="main-title">
+                PROYECTO<br><span>ORDEN DE SERVICIO INSTALACIÓN</span>
+                <div style="font-size:11px;font-weight:bold;color:#dc2626;margin-top:3px;letter-spacing:1px;">FOLIO: <span class="pdf-folio-value">—</span></div>
+            </div>
+        </div>
+
+        <div style="border-top: 4px solid #043185; margin-bottom: 2px;"></div>
+        <div class="info-block" style="border: none; padding: 0;">
+            <div class="provider-box">
+                <div class="provider-left-blank"></div>
+                <div class="provider-content">
+                    <div class="provider-title bg-blue"><input type="radio" checked> EMPLEADO DEL PROVEDOR</div>
+                    <div class="provider-fields text-blue">
+                        <div><input type="radio" checked> NOMBRE:</div>
+                        <div><input type="radio" checked> CARGO:</div>
+                        <div><input type="radio" checked> CELULAR:</div>
+                    </div>
+                </div>
+            </div>
+            <div class="logo-box">
+                <img src="https://i.ibb.co/217VSVMh/logo-hdm.png" alt="Logo HDM" style="max-height: 50px; max-width: 100%;">
+            </div>
+            <div class="company-info">
+                Dirección: Av. Industria No. 102 Bodega 13<br>
+                Col. Los Reyes Iztacala, Tlalnepantla de Baz<br>
+                Edo. de Méx. C.P. 54090<br>
+                Tel: 55-5365-4165 55-2628-3094
+            </div>
+        </div>
+        <div style="border-top: 4px solid #043185; margin-bottom: 5px; margin-top:2px;"></div>
+
+        <div class="section-title">ANALISIS FISICO-QUIMICO DE AGUA</div>
+        <table>
+            <tr>
+                <th style="width: 13%;">MAX. PERMISIBLES</th><th style="width: 11%;">CLORO 0-0.5</th><th style="width: 11%;">PH 6.5-8.5</th><th style="width: 11%;">DUREZA 0-100</th><th style="width: 11%;">TDS 0-500</th><th style="width: 13%;">ALCALINIDAD 0</th><th style="width: 12%;">CLORUROS 0-2</th><th style="width: 18%;">OTROS</th>
+            </tr>
+            <tr><td>AGUA CRUDA</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>AGUA FILTRADA</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>AGUA OSMÓTICA</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        </table>
+
+        <div class="section-title">EQUIPO DE FILTRACIÓN (INSTALADADO)</div>
+        <table>
+            <tr>
+                <th style="width: 16%;">EQUIPO</th><th style="width: 16%;">MODELO</th><th style="width: 16%;">TIPO Y TAMAÑO</th><th style="width: 16%;">No. SERIE</th><th style="width: 36%;">NOTAS</th>
+            </tr>
+            <tr><td>F. LECHO PROFUNDO</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>F. CARBON ACTIVADO</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>F. PULIDORES</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>F. MULTIMEDIA</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>F. SUAVISADOR</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>OSMOSIS</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>OTROS</td><td></td><td></td><td></td><td></td></tr>
+        </table>
+
+        <div class="photo-grid">
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">F. LECHO PROFUNDO</div></div>
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">F. CARBON ACTIVADO</div></div>
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">F. PULIDORES</div></div>
+        </div>
+        <div class="photo-grid">
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">F. MULTIMEDIA</div></div>
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">F. SUAVISADOR</div></div>
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">OSMOSIS</div></div>
+        </div>
+        <div class="photo-grid">
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">OTROS</div></div>
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">OTROS</div></div>
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">OTROS</div></div>
+        </div>
+
+        <div class="section-title">EQUIPO DE BOMBEO (INSTALADADO)</div>
+        <table>
+            <tr>
+                <th style="width: 16%;">EQUIPO</th><th style="width: 16%;">MODELO</th><th style="width: 16%;">TIPO Y TAMAÑO</th><th style="width: 16%;">No. SERIE</th><th style="width: 36%;">NOTAS</th>
+            </tr>
+            <tr><td>EQ. BOMBEO</td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>T. DE ALMACENAMIENTO</td><td></td><td></td><td></td><td></td></tr>
+        </table>
+
+        <div class="photo-grid">
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">EQ. BOMBEO</div></div>
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">EQ. BOMBEO</div></div>
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">TANQUE DE ALMACENAMIENTO</div></div>
+        </div>
+    </div>
+    <div class="bottom-line"></div>
+</div>
+
+<!-- ==================== HOJA 2 ==================== -->
+<div class="page">
+    <div class="content-wrapper">
+        <div class="header-top">
+            <div class="radios-left text-blue">
+                <div style="background-color: #043185; width: 20px; height: 10px; margin-bottom:2px; display:flex; justify-content:center; align-items:center; color:white; font-weight:bold; font-size:10px;">-</div>
+                <div><input type="radio" checked> Dirección:</div>
+                <div><input type="radio" checked> Colonia:</div>
+                <div><input type="radio" checked> </div>
+                <div><input type="radio" checked> </div>
+                <div><input type="radio" checked> </div>
+            </div>
+            <div class="main-title">
+                PROYECTO<br><span>ORDEN DE SERVICIO INSTALACIÓN</span>
+                <div style="font-size:11px;font-weight:bold;color:#dc2626;margin-top:3px;letter-spacing:1px;">FOLIO: <span class="pdf-folio-value">—</span></div>
+            </div>
+        </div>
+
+        <div style="border-top: 4px solid #043185; margin-bottom: 2px;"></div>
+        <div class="info-block" style="border: none; padding: 0;">
+            <div class="provider-box">
+                <div class="provider-left-blank"></div>
+                <div class="provider-content">
+                    <div class="provider-title bg-blue"><input type="radio" checked> EMPLEADO DEL PROVEDOR</div>
+                    <div class="provider-fields text-blue">
+                        <div><input type="radio" checked> NOMBRE:</div>
+                        <div><input type="radio" checked> CARGO:</div>
+                        <div><input type="radio" checked> CELULAR:</div>
+                    </div>
+                </div>
+            </div>
+            <div class="logo-box">
+                <img src="https://i.ibb.co/217VSVMh/logo-hdm.png" alt="Logo HDM" style="max-height: 50px; max-width: 100%;">
+            </div>
+            <div class="company-info">
+                Dirección: Av. Industria No. 102 Bodega 13<br>
+                Col. Los Reyes Iztacala, Tlalnepantla de Baz<br>
+                Edo. de Méx. C.P. 54090<br>
+                Tel: 55-5365-4165 55-2628-3094
+            </div>
+        </div>
+        <div style="border-top: 4px solid #043185; margin-bottom: 5px; margin-top:2px;"></div>
+
+        <div class="section-title">EQUIPO CALENTADOR (INSTALADADO)</div>
+        <table>
+            <tr>
+                <th style="width: 16%;">EQUIPO</th><th style="width: 16%;">MODELO</th><th style="width: 16%;">TIPO Y TAMAÑO</th><th style="width: 16%;">No. SERIE</th><th style="width: 36%;">NOTAS</th>
+            </tr>
+            <tr><td>CALENTADOR</td><td></td><td></td><td></td><td></td></tr>
+        </table>
+
+        <div class="photo-grid">
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">CALENTADOR</div></div>
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">CALENTADOR</div></div>
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">CALENTADOR</div></div>
+        </div>
+
+        <div class="section-title">REPORTE FOTOGRAFICO (ESTADO INICIAL)</div>
+        <div class="photo-grid">
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-input"></div></div>
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-input"></div></div>
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-input"></div></div>
+        </div>
+        <div class="photo-grid">
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-input"></div></div>
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-input"></div></div>
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-input"></div></div>
+        </div>
+        <div class="photo-grid">
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">FOTOGRAFIA DE LA SUCURSAL</div></div>
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">FOTOGRAFIA GENERAL</div></div>
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">FOTOGRAFIA CONSUMIBLES</div></div>
+        </div>
+    </div>
+    <div class="bottom-line"></div>
+</div>
+
+<!-- ==================== HOJA 3 ==================== -->
+<div class="page">
+    <div class="content-wrapper">
+        <div class="header-top">
+            <div class="radios-left text-blue">
+                <div style="background-color: #043185; width: 20px; height: 10px; margin-bottom:2px; display:flex; justify-content:center; align-items:center; color:white; font-weight:bold; font-size:10px;">-</div>
+                <div><input type="radio" checked> Dirección:</div>
+                <div><input type="radio" checked> Colonia:</div>
+                <div><input type="radio" checked> </div>
+                <div><input type="radio" checked> </div>
+                <div><input type="radio" checked> </div>
+            </div>
+            <div class="main-title">
+                PROYECTO<br><span>ORDEN DE SERVICIO INSTALACIÓN</span>
+                <div style="font-size:11px;font-weight:bold;color:#dc2626;margin-top:3px;letter-spacing:1px;">FOLIO: <span class="pdf-folio-value">—</span></div>
+            </div>
+        </div>
+
+        <div style="border-top: 4px solid #043185; margin-bottom: 2px;"></div>
+        <div class="info-block" style="border: none; padding: 0;">
+            <div class="provider-box">
+                <div class="provider-left-blank"></div>
+                <div class="provider-content">
+                    <div class="provider-title bg-blue"><input type="radio" checked> EMPLEADO DEL PROVEDOR</div>
+                    <div class="provider-fields text-blue">
+                        <div><input type="radio" checked> NOMBRE:</div>
+                        <div><input type="radio" checked> CARGO:</div>
+                        <div><input type="radio" checked> CELULAR:</div>
+                    </div>
+                </div>
+            </div>
+            <div class="logo-box">
+                <img src="https://i.ibb.co/217VSVMh/logo-hdm.png" alt="Logo HDM" style="max-height: 50px; max-width: 100%;">
+            </div>
+            <div class="company-info">
+                Dirección: Av. Industria No. 102 Bodega 13<br>
+                Col. Los Reyes Iztacala, Tlalnepantla de Baz<br>
+                Edo. de Méx. C.P. 54090<br>
+                Tel: 55-5365-4165 55-2628-3094
+            </div>
+        </div>
+        <div style="border-top: 4px solid #043185; margin-bottom: 5px; margin-top:2px;"></div>
+
+        <div class="section-title">REPORTE FOTOGRAFICO (ESTADO FINAL)</div>
+        <div class="photo-grid">
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">GENERALES</div></div>
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">GENERALES</div></div>
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">GENERALES</div></div>
+        </div>
+        <div class="photo-grid">
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">BY-PASS AC - AF: GENERALES</div></div>
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">BY-PASS LECHO PROFUNDO</div></div>
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">LINEAS PINTADAS: GENERALES</div></div>
+        </div>
+        <div class="photo-grid">
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">LINEAS ETIQUETADAS: GENERALES</div></div>
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">LINEAS ETIQUETADAS: GENERALES</div></div>
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">LINEAS ETIQUETADAS: GENERALES</div></div>
+        </div>
+
+        <div class="section-title">REPORTE FOTOGRAFICO (IDENTIFICACIÓN LINEAS HIDRÁULICAS)</div>
+        <div class="photo-grid">
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">LINEA AGUA CRUDA</div></div>
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">LINEA AGUA CRUDA</div></div>
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">LINEA AGUA CRUDA</div></div>
+        </div>
+
+        <div class="footer-section">
+            <div class="footer-title bg-blue"><input type="radio" checked> DATOS DE QUIEN RECIBE EL TRABAJO</div>
+            <div class="footer-grid">
+                <div class="footer-blank"></div>
+                <div class="footer-col-middle">
+                    <div class="box-container">
+                        <div class="box-header bg-blue"><input type="radio" checked> EMPLEADO QUIEN RECIBE EL TRABAJO</div>
+                        <div class="box-body text-blue" style="font-weight: bold;">
+                            <div><input type="radio" checked> NOMBRE:</div>
+                            <div><input type="radio" checked> CARGO:</div>
+                            <div><input type="radio" checked> CELULAR:</div>
+                        </div>
+                    </div>
+                    <div class="box-container">
+                        <div class="box-header bg-blue"><input type="radio" checked> COMENTARIO DE SALIDA</div>
+                        <div class="box-body"></div>
+                    </div>
+                </div>
+                <div class="footer-col-right">
+                    <div class="box-container">
+                        <div class="box-header bg-blue"><input type="radio" checked> ESTATUS</div>
+                        <div class="box-body"></div>
+                    </div>
+                    <div class="box-container">
+                        <div class="box-header bg-blue"><input type="radio" checked> FIRMA</div>
+                        <div class="box-body"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-line"></div>
+</div>
+
+<!-- ==================== HOJA 4 ==================== -->
+<div class="page">
+    <div class="content-wrapper">
+        <div class="header-top">
+            <div class="radios-left text-blue">
+                <div style="background-color: #043185; width: 20px; height: 10px; margin-bottom:2px; display:flex; justify-content:center; align-items:center; color:white; font-weight:bold; font-size:10px;">-</div>
+                <div><input type="radio" checked> Dirección:</div>
+                <div><input type="radio" checked> Colonia:</div>
+                <div><input type="radio" checked> </div>
+                <div><input type="radio" checked> </div>
+                <div><input type="radio" checked> </div>
+            </div>
+            <div class="main-title">
+                PROYECTO<br><span>ORDEN DE SERVICIO INSTALACIÓN</span>
+                <div style="font-size:11px;font-weight:bold;color:#dc2626;margin-top:3px;letter-spacing:1px;">FOLIO: <span class="pdf-folio-value">—</span></div>
+            </div>
+        </div>
+
+        <div style="border-top: 4px solid #043185; margin-bottom: 2px;"></div>
+        <div class="info-block" style="border: none; padding: 0;">
+            <div class="provider-box">
+                <div class="provider-left-blank"></div>
+                <div class="provider-content">
+                    <div class="provider-title bg-blue"><input type="radio" checked> EMPLEADO DEL PROVEDOR</div>
+                    <div class="provider-fields text-blue">
+                        <div><input type="radio" checked> NOMBRE:</div>
+                        <div><input type="radio" checked> CARGO:</div>
+                        <div><input type="radio" checked> CELULAR:</div>
+                    </div>
+                </div>
+            </div>
+            <div class="logo-box">
+                <img src="https://i.ibb.co/217VSVMh/logo-hdm.png" alt="Logo HDM" style="max-height: 50px; max-width: 100%;">
+            </div>
+            <div class="company-info">
+                Dirección: Av. Industria No. 102 Bodega 13<br>
+                Col. Los Reyes Iztacala, Tlalnepantla de Baz<br>
+                Edo. de Méx. C.P. 54090<br>
+                Tel: 55-5365-4165 55-2628-3094
+            </div>
+        </div>
+        <div style="border-top: 4px solid #043185; margin-bottom: 5px; margin-top:2px;"></div>
+
+        <div class="section-title">REPORTE FOTOGRAFICO (ARRANQUE DE EQUIPOS)</div>
+        <div class="photo-grid">
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">MANOMETRO (40 - 60 PSI)</div></div>
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">BOMBA (DISPLAY)</div></div>
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">LLAVE DE MUESTRO (FLUJO)</div></div>
+        </div>
+        <div class="photo-grid">
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">EQUIPO CONECTADO (LAMP. UV)</div></div>
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">EQUIPO CONECTADO (BOMBA)</div></div>
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">EQUIPO CONECTADO (OSMOSIS)</div></div>
+        </div>
+        <div class="photo-grid">
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">EXTRA</div></div>
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">EXTRA</div></div>
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">EXTRA</div></div>
+        </div>
+        <div class="photo-grid">
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">EXTRA</div></div>
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">EXTRA</div></div>
+            <div class="photo-box"><div class="photo-empty"></div><div class="photo-label">EXTRA</div></div>
+        </div>
+
+        <div style="border: 1px solid black; height: 60px; margin-bottom: 5px; padding: 4px; font-size: 8px;">
+            &lt;&lt;OBSERVACIONES&gt;&gt;*
+        </div>
+
+        <div class="footer-section">
+            <div class="footer-title bg-blue"><input type="radio" checked> DATOS DE QUIEN RECIBE EL TRABAJO</div>
+            <div class="footer-grid">
+                <div class="footer-blank"></div>
+                <div class="footer-col-middle">
+                    <div class="box-container">
+                        <div class="box-header bg-blue"><input type="radio" checked> EMPLEADO QUIEN RECIBE EL TRABAJO</div>
+                        <div class="box-body text-blue" style="font-weight: bold;">
+                            <div><input type="radio" checked> NOMBRE:</div>
+                            <div><input type="radio" checked> CARGO:</div>
+                            <div><input type="radio" checked> CELULAR:</div>
+                        </div>
+                    </div>
+                    <div class="box-container">
+                        <div class="box-header bg-blue"><input type="radio" checked> COMENTARIO DE SALIDA</div>
+                        <div class="box-body"></div>
+                    </div>
+                </div>
+                <div class="footer-col-right">
+                    <div class="box-container">
+                        <div class="box-header bg-blue"><input type="radio" checked> ESTATUS</div>
+                        <div class="box-body"></div>
+                    </div>
+                    <div class="box-container">
+                        <div class="box-header bg-blue"><input type="radio" checked> FIRMA</div>
+                        <div class="box-body"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-line"></div>
+</div>
+
+<script src="autollenado_instalaciones.js"></script>
+</body>
+</html>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+    <title>Portal Operativo - HDM</title>
+    
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#005B9A", 
+                        "primary-dark": "#004575",
+                        "surface": "#FFFFFF",
+                        "text-main": "#1E293B",
+                        "text-sub": "#64748B",
+                    },
+                    fontFamily: { sans: ["Inter", "sans-serif"] },
+                    boxShadow: { 'premium': '0 10px 25px -5px rgba(0, 0, 0, 0.04), 0 8px 10px -6px rgba(0, 0, 0, 0.04)' }
+                },
+            },
+        };
+    </script>
+
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: linear-gradient(135deg, #0084CA 0%, #005B9A 100%); 
+            background-attachment: fixed; 
+        }
+        #reader video { 
+            object-fit: cover; 
+            border-radius: 0.75rem; 
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center justify-center p-4 antialiased">
+    
+    <div class="w-full max-w-[420px] bg-surface rounded-2xl shadow-premium border border-slate-100 overflow-hidden relative">
+        <div class="p-6 sm:p-8">
+            
+            <div class="flex flex-col items-center mb-6">
+                <img src="https://i.ibb.co/rCsz6hh/LOGOTIPO.png" alt="Logo HDM" class="mb-4 object-contain h-20"> 
+                <h1 class="text-2xl font-semibold text-text-main tracking-tight">Portal Operativo</h1>
+                <p class="text-[13px] text-text-sub mt-1 text-center">Sistemas de Filtración de Agua SA. de C.V.</p>
+            </div>
+            
+            <form id="loginForm" class="space-y-5 block">
+                <div class="space-y-1.5">
+                    <label class="text-[13px] font-medium text-slate-700 ml-0.5" for="username">No. de Empleado</label>
+                    <div class="relative flex items-center">
+                        <span class="material-symbols-outlined absolute left-4 text-slate-400 text-xl">badge</span>
+                        <input required autocomplete="username" class="block w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-text-main placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm uppercase" id="username" placeholder="Ej. EJBM" type="text">
+                    </div>
+                </div>
+                
+                <div class="space-y-1.5">
+                    <label class="text-[13px] font-medium text-slate-700 ml-0.5" for="password">Contraseña</label>
+                    <div class="relative flex items-center">
+                        <span class="material-symbols-outlined absolute left-4 text-slate-400 text-xl">lock</span>
+                        <input required autocomplete="current-password" class="block w-full pl-12 pr-12 py-3 bg-slate-50 border border-slate-200 rounded-lg text-text-main placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm" id="password" placeholder="••••••••" type="password">
+                        <button class="absolute right-4 flex items-center text-slate-400 hover:text-primary transition-colors" onclick="togglePassword()" type="button">
+                            <span class="material-symbols-outlined text-xl" id="toggleIcon">visibility_off</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="alertMessage" class="hidden py-2.5 px-3 bg-red-50 border border-red-200 text-red-600 text-[13px] font-medium rounded-lg text-center transition-all"></div>
+                
+                <div class="space-y-3 pt-2">
+                    <button id="submitBtn" class="w-full flex justify-center items-center py-3.5 px-4 rounded-lg text-sm font-semibold text-white bg-primary hover:bg-primary-dark shadow-md transition-all active:scale-[0.98]" type="submit">
+                        INICIAR SESIÓN
+                    </button>
+                    
+                    <button type="button" onclick="window.top.location.href='https://hdmordendeservicios-cloud.github.io/evaluacion/'" class="w-full flex justify-center items-center py-3.5 px-4 rounded-lg text-sm font-semibold text-white bg-red-600 hover:bg-red-700 shadow-md transition-all active:scale-[0.98]">
+                        EVALUACIÓN DE UN TRABAJO
+                    </button>
+                </div>
+            </form>
+
+            <div id="mainMenu" class="hidden animate-fade-in">
+                
+                <div class="bg-slate-50 rounded-xl border border-slate-100 overflow-hidden flex mb-5 shadow-sm">
+                    <div class="w-1.5 bg-[#005B9A]"></div>
+                    <div class="p-3 flex-1">
+                        <p class="text-[10px] uppercase tracking-wider text-[#005B9A] font-bold mb-0.5">USUARIO:</p>
+                        <p id="resName" class="text-sm font-bold text-slate-800 uppercase leading-tight">Cargando...</p>
+                        <div class="mt-2">
+                            <p class="text-[10px] uppercase tracking-wider text-[#005B9A] font-bold mb-0.5">CARGO:</p>
+                            <p id="resPos" class="text-xs font-medium text-slate-600 uppercase">---</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 mb-5">
+                    
+                    <div class="flex flex-col gap-3">
+                        <button onclick="openFolios()" class="flex flex-col items-center p-4 bg-white rounded-2xl shadow-sm border border-slate-100 hover:bg-slate-50 transition-all active:scale-95 text-center">
+                            <div class="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center mb-2 text-white"><span class="material-symbols-outlined text-xl">list_alt</span></div>
+                            <p class="text-[11px] font-bold text-slate-800 leading-tight">Folios Ingresados</p>
+                        </button>
+                        <div class="bg-blue-50 border border-blue-100 p-3 rounded-xl text-center shadow-inner flex flex-col justify-center flex-1">
+                            <p class="text-[9px] uppercase font-bold text-blue-600 mb-1">Folio Generado</p>
+                            <p id="folioDisp" class="text-sm font-extrabold text-blue-800">No generado</p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-3">
+                        <button onclick="goTo('RegistroQR')" class="flex flex-col items-center p-4 bg-white rounded-2xl shadow-sm border border-slate-100 hover:bg-slate-50 transition-all active:scale-95 text-center">
+                            <div class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center mb-2 text-white"><span class="material-symbols-outlined text-xl">qr_code_scanner</span></div>
+                            <p class="text-[11px] font-bold text-slate-800 leading-tight">Registro Por QR</p>
+                        </button>
+                        <div class="bg-emerald-50 border border-emerald-100 p-3 rounded-xl text-center shadow-inner flex flex-col justify-center flex-1">
+                            <p class="text-[9px] uppercase font-bold text-emerald-600 mb-1">Sucursal Detectada</p>
+                            <p id="resBranch" class="text-[11px] font-bold text-emerald-800 leading-tight">Sin escanear</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="cameraSection" class="hidden mb-5">
+                    <div class="flex justify-between items-center mb-2 px-1">
+                        <span class="text-xs font-bold text-slate-700 flex items-center"><span class="material-symbols-outlined text-sm mr-1 text-red-500 animate-pulse">fiber_manual_record</span> Escaneando...</span>
+                        <button onclick="cerrarCamara()" class="text-[11px] font-bold text-slate-500 hover:text-red-600 px-2 py-1 bg-slate-100 rounded-md">CERRAR CÁMARA</button>
+                    </div>
+                    <div id="reader" class="w-full rounded-xl border-2 border-slate-200 shadow-md"></div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <button id="btnGenerarFolio" onclick="generarFolioManual()" class="flex flex-col items-center p-4 bg-white rounded-2xl shadow-sm border border-slate-100 hover:bg-slate-50 transition-all active:scale-95 text-center">
+                        <div class="w-10 h-10 rounded-xl bg-slate-700 flex items-center justify-center mb-2 text-white"><span class="material-symbols-outlined text-xl">note_add</span></div>
+                        <p class="text-[11px] font-bold text-slate-800 leading-tight">Generar Folio</p>
+                    </button>
+
+                    <button onclick="activarCamara()" class="flex flex-col items-center p-4 bg-white rounded-2xl shadow-sm border border-slate-100 hover:bg-slate-50 transition-all active:scale-95 text-center">
+                        <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center mb-2 text-white"><span class="material-symbols-outlined text-xl">location_searching</span></div>
+                        <p class="text-[11px] font-bold text-slate-800 leading-tight">Escanear Sucursal</p>
+                    </button>
+
+                    <button onclick="goToServicio('correctivo')" class="flex flex-col items-center p-4 bg-white rounded-2xl shadow-sm border border-slate-100 hover:bg-slate-50 transition-all active:scale-95 text-center ring-2 ring-indigo-500/30">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center mb-2 text-white"><span class="material-symbols-outlined text-xl">build</span></div>
+                        <p class="text-[11px] font-bold text-slate-800 leading-tight">Orden Correctivo</p>
+                    </button>
+
+                    <button onclick="goToServicio('instalaciones')" class="flex flex-col items-center p-4 bg-white rounded-2xl shadow-sm border border-slate-100 hover:bg-slate-50 transition-all active:scale-95 text-center ring-2 ring-orange-500/30">
+                        <div class="w-10 h-10 rounded-xl bg-orange-500 flex items-center justify-center mb-2 text-white"><span class="material-symbols-outlined text-xl">precision_manufacturing</span></div>
+                        <p class="text-[11px] font-bold text-slate-800 leading-tight">Instalaciones</p>
+                    </button>
+
+                    <!-- ★★★ CAMBIO: botón Mantenimiento ahora llama a goToServicio('mantenimiento') ★★★ -->
+                    <button onclick="goToServicio('mantenimiento')" class="flex flex-col items-center p-4 bg-white rounded-2xl shadow-sm border border-slate-100 hover:bg-slate-50 transition-all active:scale-95 text-center ring-2 ring-teal-500/30">
+                        <div class="w-10 h-10 rounded-xl bg-teal-600 flex items-center justify-center mb-2 text-white"><span class="material-symbols-outlined text-xl">engineering</span></div>
+                        <p class="text-[11px] font-bold text-slate-800 leading-tight">Mantenimiento</p>
+                    </button>
+
+                    <button onclick="goToServicio('reporte_visitas')" class="flex flex-col items-center p-4 bg-white rounded-2xl shadow-sm border border-slate-100 hover:bg-slate-50 transition-all active:scale-95 text-center ring-2 ring-slate-400/40">
+                        <div class="w-10 h-10 rounded-xl bg-slate-500 flex items-center justify-center mb-2 text-white"><span class="material-symbols-outlined text-xl">assignment_turned_in</span></div>
+                        <p class="text-[11px] font-bold text-slate-800 leading-tight">Reporte Visita</p>
+                    </button>
+                </div>
+
+                <button onclick="cerrarSesion()" class="w-full mt-5 py-3.5 bg-red-600 text-white text-sm font-bold rounded-xl shadow-md hover:bg-red-700 transition-all active:scale-[0.98] flex items-center justify-center">
+                    <span class="material-symbols-outlined mr-2 text-lg">logout</span> CERRAR SESIÓN
+                </button>
+
+            </div>
+        </div>
+    </div>
+    
+    <div class="mt-6 mb-4 text-center">
+        <p class="text-[11px] font-medium uppercase tracking-widest text-white/70">
+            © 2026 HDM MÉXICO. Todos los derechos reservados.
+        </p>
+    </div>
+
+    <div id="modalFolios" class="hidden fixed top-0 left-0 w-full h-full bg-black/80 z-50 items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white p-5 rounded-2xl w-full max-w-[400px] max-h-[80vh] flex flex-col shadow-2xl">
+            <h3 class="text-lg font-bold text-primary mb-3 text-center uppercase tracking-wide">Historial (Ayer y Hoy)</h3>
+            <div id="tableContent" class="overflow-y-auto flex-1 text-sm text-center text-slate-500 py-4">Cargando datos...</div>
+            <button onclick="document.getElementById('modalFolios').classList.replace('flex', 'hidden')" class="mt-4 w-full py-3 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-colors">CERRAR</button>
+        </div>
+    </div>
+
+    <script>
+        // 🔴🔴 PEGA AQUÍ TU ENLACE DE GOOGLE APPS SCRIPT 🔴🔴
+        const API_URL = "https://script.google.com/macros/s/AKfycbw-2aFfgaRuLW74QTMFyO_WVLfPA89TJZN7C-B5N5_MUexsAlV6po-5Q2OS8GgTeuoibA/exec";
+
+        // ★★★ CAMBIO: URL base del selector de cuestionarios de Mantenimiento ★★★
+        // Sube la carpeta "codigos/" a tu GitHub Pages en la ruta /mantenimiento/
+        const MANTENIMIENTO_URL = "https://hdmordendeservicios-cloud.github.io/mantenimiento/index.html";
+
+        // ★★★ URLs de los cuestionarios por tipo de servicio ★★★
+        const SERVICIOS_URL = {
+            'mantenimiento': MANTENIMIENTO_URL,
+            'correctivo': MANTENIMIENTO_URL.replace('index.html', 'correctivo.html'),
+            'instalaciones': MANTENIMIENTO_URL.replace('index.html', 'instalaciones.html'),
+            'reporte_visitas': MANTENIMIENTO_URL.replace('index.html', 'reporte_visitas.html')
+        };
+
+        let html5QrCode;
+        let globalFolio = "";
+        let globalBranch = "";
+        let globalUserName = ""; 
+
+        const URL_MAP = {
+            'ServicioCorrectivo': 'https://docs.google.com/forms/d/e/1FAIpQLSexALVRaCItCODgce3_1U-sfRaMAQq365o57xIJvikpNMc40A/viewform?usp=pp_url&entry.833549862=HDM-0',
+            'ServicioInstalaciones': 'https://docs.google.com/forms/d/e/1FAIpQLSczsSDydxhwDe6Up62D0dd3R6DZND5wQ1nvgySBAXkNm0fTNA/viewform?usp=pp_url&entry.1407249899=HDM-0',
+            'ServicioMantenimiento': 'https://docs.google.com/forms/d/e/1FAIpQLSdAWJ86UbY8cWq76Lzv3AJjfgkQp6JyNe7lClGYa9JePJ4jmw/viewform?usp=pp_url&entry.1296392221=HDM-0',
+            'ServicioReporteVisita': 'https://docs.google.com/forms/d/e/1FAIpQLSfj6ZjnKHhc3h-HGGj2q7HcRTuYOcLvQnMws8K3998V5hh_cQ/viewform?usp=pp_url&entry.1483243805=HDM-0',
+            'RegistroQR': 'https://hdmordendeservicios-cloud.github.io/hdm/'
+        };
+
+        async function apiCall(action, params = {}) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: action, ...params })
+                });
+                return await response.json();
+            } catch (error) { return { status: 'error' }; }
+        }
+
+        function togglePassword() {
+            const p = document.getElementById('password');
+            const i = document.getElementById('toggleIcon');
+            if (p.type === 'password') { p.type = 'text'; i.textContent = 'visibility'; } 
+            else { p.type = 'password'; i.textContent = 'visibility_off'; }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const alertMsg = document.getElementById('alertMessage');
+            const u = document.getElementById('username').value.trim();
+            const p = document.getElementById('password').value.trim();
+
+            alertMsg.classList.add('hidden');
+            btn.innerText = 'VERIFICANDO CREDENCIALES...';
+            btn.disabled = true;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+
+            const res = await apiCall('getEmployeeData', { username: u, password: p });
+
+            if (res.status === 'success' && res.esValido) {
+                globalUserName = res.name;
+                document.getElementById('resName').innerText = res.name;
+                document.getElementById('resPos').innerText = res.position;
+                
+                document.getElementById('loginForm').style.display = 'none';
+                document.getElementById('mainMenu').classList.remove('hidden');
+            } else {
+                alertMsg.innerText = "Usuario o contraseña incorrectos.";
+                alertMsg.classList.remove('hidden');
+                btn.innerText = 'INICIAR SESIÓN';
+                btn.disabled = false;
+                btn.classList.remove('opacity-75', 'cursor-not-allowed');
+            }
+        });
+
+        function cerrarSesion() {
+            if (html5QrCode && html5QrCode.isScanning) {
+                html5QrCode.stop().catch(e => console.log(e));
+            }
+            window.location.reload(); 
+        }
+
+        async function generarFolioManual() {
+            if (globalFolio !== "") return; 
+
+            const folioUI = document.getElementById('folioDisp');
+            folioUI.innerText = "Creando...";
+            folioUI.classList.add("animate-pulse");
+
+            const res = await apiCall('getNextFolio', { userName: globalUserName });
+            
+            folioUI.classList.remove("animate-pulse");
+            if (res.status === 'success') {
+                globalFolio = res.folio;
+                folioUI.innerText = globalFolio;
+                document.getElementById('btnGenerarFolio').classList.add('opacity-50', 'bg-slate-100');
+                
+                if (globalBranch !== "") {
+                    apiCall('updateFolioBranch', { folio: globalFolio, branchName: globalBranch });
+                }
+            } else {
+                folioUI.innerText = "Error, intente de nuevo";
+            }
+        }
+
+        function activarCamara() {
+            document.getElementById('cameraSection').classList.remove('hidden');
+            const config = { fps: 10, qrbox: { width: 220, height: 220 } };
+            html5QrCode = new Html5Qrcode("reader");
+            
+            html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess)
+            .catch(function() {
+                html5QrCode.start({ facingMode: "user" }, config, onScanSuccess);
+            });
+        }
+
+        function cerrarCamara() {
+            if (html5QrCode && html5QrCode.isScanning) {
+                html5QrCode.stop().catch(e => console.log(e));
+            }
+            document.getElementById('cameraSection').classList.add('hidden');
+        }
+
+        async function onScanSuccess(decodedText) {
+            document.getElementById('resBranch').innerHTML = '<span class="text-emerald-500 animate-pulse">Buscando...</span>';
+            cerrarCamara(); 
+            
+            const r = await apiCall('getBranchFromCatalog', { qrContent: decodedText });
+            
+            if(r.status === 'success') {
+                globalBranch = r.branchName;
+                document.getElementById('resBranch').innerText = globalBranch;
+                
+                if (globalFolio !== "") {
+                    apiCall('updateFolioBranch', { folio: globalFolio, branchName: globalBranch });
+                }
+            } else {
+                document.getElementById('resBranch').innerHTML = '<span class="text-red-600">QR No Reconocido</span>';
+            }
+        }
+
+        async function openFolios() {
+            document.getElementById('modalFolios').classList.replace('hidden', 'flex');
+            document.getElementById('tableContent').innerHTML = "<p class='mt-10 animate-pulse text-primary font-semibold'>Descargando historial...</p>";
+            
+            const data = await apiCall('getRecentFolios');
+            
+            if(!data.folios || data.folios.length === 0) { 
+                document.getElementById('tableContent').innerHTML = "<p class='mt-10'>Sin registros recientes.</p>"; 
+                return; 
+            }
+            
+            let h = '<table class="w-full text-left border-collapse"><tr class="bg-slate-100 text-slate-700"><th class="p-2 border-b">FOLIO</th><th class="p-2 border-b">SUCURSAL</th></tr>';
+            data.folios.forEach(r => { h += `<tr><td class="p-2 border-b font-medium text-slate-800">${r.folio}</td><td class="p-2 border-b text-slate-600">${r.sucursal}</td></tr>`; });
+            document.getElementById('tableContent').innerHTML = h + '</table>';
+        }
+
+        function goTo(key) {
+            window.top.location.href = URL_MAP[key];
+        }
+
+        // ★★★ FUNCIÓN UNIFICADA: abre cualquier cuestionario pasando folio + datos ★★★
+        function goToServicio(tipo) {
+            // Validar que haya folio generado
+            if (!globalFolio) {
+                const alertMsg = document.getElementById('alertMessage');
+                alertMsg.innerText = "Primero genera un folio antes de abrir el cuestionario.";
+                alertMsg.classList.remove('hidden');
+                document.getElementById('mainMenu').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                setTimeout(() => alertMsg.classList.add('hidden'), 4000);
+                return;
+            }
+
+            const url = SERVICIOS_URL[tipo];
+            if (!url) { console.error('Tipo de servicio desconocido:', tipo); return; }
+
+            // Construir parámetros URL
+            const params = new URLSearchParams({
+                folio: globalFolio,
+                userName: globalUserName,
+                position: document.getElementById('resPos').innerText,
+                branch: globalBranch || ''
+            });
+
+            window.top.location.href = url + '?' + params.toString();
+        }
+    </script>
+</body>
+</html>

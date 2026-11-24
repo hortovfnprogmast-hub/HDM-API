@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Visita - Formato Corregido</title>
+    <style>
+        @page { size: A4; margin: 0; }
+        * { box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; font-size: 9px; margin: 0; padding: 0; background-color: #525659; }
+        .page { width: 210mm; height: 297mm; background: white; margin: 20px auto; padding: 10mm 15mm; display: flex; flex-direction: column; box-shadow: 0 0 10px rgba(0,0,0,0.5); overflow: hidden; }
+        .text-blue { color: #043185; }
+        .bg-blue { background-color: #043185; color: white; }
+        .text-center { text-align: center; }
+        .bold { font-weight: bold; }
+        input[type="radio"] { accent-color: #043185; margin: 0 4px 0 0; width: 10px; height: 10px; vertical-align: middle; }
+        .thick-divider { border-top: 4px solid #043185; margin: 6px 0; width: 100%; }
+        .header-top { display: flex; justify-content: space-between; align-items: flex-start; }
+        .radios-left { font-size: 8px; line-height: 1.3; display: flex; flex-direction: column; width: 25%; }
+        .radios-left .blue-box { background-color: #043185; width: 22px; height: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 3px; }
+        .radios-left .blue-box input { margin: 0; }
+        .main-title { flex-grow: 1; text-align: center; font-size: 15px; font-weight: bold; color: #043185; line-height: 1.2; padding-top: 5px; }
+        .header-spacer { width: 25%; }
+        .info-block { display: flex; justify-content: space-between; align-items: stretch; margin-top: 5px; }
+        .provider-box { display: flex; width: 38%; border: 1px solid #777; }
+        .provider-left-blank { width: 40px; border-right: 1px solid #777; }
+        .provider-content { flex-grow: 1; display: flex; flex-direction: column; }
+        .provider-title { font-size: 8px; padding: 3px 5px; font-weight: bold; }
+        .provider-fields { padding: 4px 5px; font-size: 8px; line-height: 1.6; display: flex; flex-direction: column; justify-content: center; flex-grow: 1;}
+        .logo-box { width: 24%; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .logo-box img { max-height: 45px; max-width: 100%; }
+        .company-info { width: 38%; text-align: right; font-size: 8px; line-height: 1.3; display: flex; flex-direction: column; justify-content: center; color: black;}
+        .middle-cols { display: flex; gap: 10px; height: 120px; }
+        .col-left { flex: 1; border: 1px solid #043185; }
+        .col-center { flex: 1.2; display: flex; flex-direction: column; gap: 8px; }
+        .col-right { flex: 1; border: 1px solid #043185; display: flex; flex-direction: column; }
+        .box-container { border: 1px solid #043185; display: flex; flex-direction: column; }
+        .box-header { padding: 3px 5px; font-size: 8px; font-weight: bold; }
+        .box-body { padding: 5px; font-size: 8px; line-height: 1.5; font-weight: bold; }
+        .box-body-light { font-weight: normal; }
+        .section-title { text-align: center; color: #043185; font-weight: bold; font-size: 10px; margin: 4px 0 2px 0; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 6px; font-size: 8px; table-layout: fixed; }
+        th, td { border: 1px solid #777; padding: 4px; text-align: left; vertical-align: middle; }
+        th { font-weight: bold; text-align: center; background-color: #043185; color: white; border-color: #043185;}
+        .table-quimico th:nth-child(1) { width: 20%; }
+        .table-puntas th:nth-child(1) { width: 20%; }
+        .table-puntas th:nth-child(2) { width: 15%; text-align: center; }
+        .table-puntas th:nth-child(3) { width: 15%; text-align: center;}
+        .table-puntas th:nth-child(4) { width: 50%; }
+        .photo-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 8px; flex-grow: 1; margin-top: 4px; margin-bottom: 5px; }
+        .grid-item { border: 1px solid #043185; display: flex; flex-direction: column; background-color: white; }
+        .grid-item-content { flex-grow: 1; }
+        .grid-item-footer { background-color: #043185; color: white; text-align: center; font-size: 9px; font-weight: bold; padding: 4px 2px; }
+        .bottom-border { border-bottom: 6px solid #043185; width: 100%; }
+        @media print { body { background-color: white; } .page { margin: 0; box-shadow: none; border: none; } }
+    </style>
+</head>
+<body>
+
+<div class="page">
+
+    <div class="header-top">
+        <div class="radios-left text-blue">
+            <div class="blue-box"><input type="radio" checked></div>
+            <div><input type="radio" checked> &lt;&lt;PROYECTO&gt;&gt;</div>
+            <div><input type="radio" checked> Calle:</div>
+            <div><input type="radio" checked> Colonia:</div>
+            <div><input type="radio" checked> Ciudad:</div>
+            <div><input type="radio" checked> FOLIO: <span class="pdf-folio-value">—</span></div>
+            <div><input type="radio" checked> &lt;&lt;Marca temporal&gt;&gt;</div>
+        </div>
+        <div class="main-title">
+            PROYECTO<br>REPORTE DE VISITA
+        </div>
+        <div class="header-spacer"></div>
+    </div>
+
+    <div class="info-block">
+        <div class="provider-box">
+            <div class="provider-left-blank"></div>
+            <div class="provider-content">
+                <div class="provider-title bg-blue"><input type="radio" checked> EMPLEADO DEL PROVEDOR</div>
+                <div class="provider-fields text-blue bold">
+                    <div><input type="radio" checked> NOMBRE:</div>
+                    <div><input type="radio" checked> CARGO:</div>
+                    <div><input type="radio" checked> CELULAR:</div>
+                </div>
+            </div>
+        </div>
+        <div class="logo-box">
+            <img src="https://i.ibb.co/217VSVMh/logo-hdm.png" alt="HDM Logo">
+        </div>
+        <div class="company-info text-blue">
+            Dirección: Av. Industria No. 102 Bodega 13<br>
+            Col. Los Reyes Iztacala, Tlalnepantla de Baz<br>
+            Edo. de Méx. C.P. 54090<br>
+            Tel: 55-5365-4165 55-2628-3094
+        </div>
+    </div>
+
+    <div class="thick-divider"></div>
+
+    <div class="middle-cols">
+        <div class="col-left"></div>
+        <div class="col-center">
+            <div class="box-container" style="flex: 1;">
+                <div class="box-header bg-blue"><input type="radio" checked> FECHA DE ENTREGA</div>
+                <div class="box-body text-blue"><input type="radio" checked> FECHA:</div>
+            </div>
+            <div class="box-container" style="flex: 2.2;">
+                <div class="box-header bg-blue"><input type="radio" checked> UBICACIÓN DE ACCESO</div>
+                <div class="box-body text-blue" style="display: flex; flex-direction: column; gap: 4px;">
+                    <div><input type="radio" checked> CORDENADAS:</div>
+                    <div><input type="radio" checked> HORARIO ENTRADA:</div>
+                    <div><input type="radio" checked> HORARIO DE SALIDA:</div>
+                    <div><input type="radio" checked> JORNADA:</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-right">
+            <div class="box-header bg-blue"><input type="radio" checked> PERMISOS</div>
+            <div class="box-body box-body-light text-blue" style="flex-grow: 1;"></div>
+        </div>
+    </div>
+
+    <div class="thick-divider"></div>
+
+    <div class="section-title">ANALISIS FISICO-QUIMICO DE AGUA</div>
+    <table class="table-quimico">
+        <tr>
+            <th>MAX. PERMISIBLES</th>
+            <th>CLORO 0-0.5</th>
+            <th>PH 6.5-8.5</th>
+            <th>DUREZA 0-100</th>
+            <th>TDS 0-500</th>
+            <th>ALCALINIDAD 0-1</th>
+            <th>CLORUROS 0-25</th>
+            <th>OTROS</th>
+        </tr>
+        <tr><td>AGUA CRUDA</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>AGUA FILTRADA</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>AGUA OSMÓTICA</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    </table>
+
+    <div class="section-title">PUNTAS DE AGUA</div>
+    <table class="table-puntas">
+        <tr>
+            <th>TIPO</th>
+            <th>Ø</th>
+            <th>H (m)</th>
+            <th>NOTAS</th>
+        </tr>
+        <tr><td>AGUA CRUDA</td><td></td><td></td><td></td></tr>
+        <tr><td>AGUA SUAVE</td><td></td><td></td><td></td></tr>
+        <tr><td>AGUA OSMOTICA</td><td></td><td></td><td></td></tr>
+        <tr><td>SUBE TINACO</td><td></td><td></td><td></td></tr>
+        <tr><td>BAJA TINACO</td><td></td><td></td><td></td></tr>
+        <tr><td>AGUA CALIENTE</td><td></td><td></td><td></td></tr>
+        <tr><td>LLENADO (CISTERNA)</td><td></td><td></td><td></td></tr>
+        <tr><td>SUCCIÓN (CISTERNA)</td><td></td><td></td><td></td></tr>
+    </table>
+
+    <div class="photo-grid">
+        <div class="grid-item"><div class="grid-item-content"></div><div class="grid-item-footer">AGUA CRUDA</div></div>
+        <div class="grid-item"><div class="grid-item-content"></div><div class="grid-item-footer">AGUA SUAVE</div></div>
+        <div class="grid-item"><div class="grid-item-content"></div><div class="grid-item-footer">AGUA OSMOTICA</div></div>
+        <div class="grid-item"><div class="grid-item-content"></div><div class="grid-item-footer">SUBE TINACO</div></div>
+        <div class="grid-item"><div class="grid-item-content"></div><div class="grid-item-footer">BAJA TINACO</div></div>
+        <div class="grid-item"><div class="grid-item-content"></div><div class="grid-item-footer">AGUA CALIENTE</div></div>
+        <div class="grid-item"><div class="grid-item-content"></div><div class="grid-item-footer">LLENADO (CISTERNA)</div></div>
+        <div class="grid-item"><div class="grid-item-content"></div><div class="grid-item-footer">SUCCIÓN (CISTERNA)</div></div>
+        <div class="grid-item"><div class="grid-item-content"></div><div class="grid-item-footer">OTROS</div></div>
+    </div>
+
+    <div class="bottom-border"></div>
+
+</div>
+
+<script src="autollenado_reporte_visitas.js"></script>
+</body>
+</html>

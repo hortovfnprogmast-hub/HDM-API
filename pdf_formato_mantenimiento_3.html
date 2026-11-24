@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orden de Servicio de Mantenimiento - Formato 3</title>
+    <style>
+        /* Configuraciones generales para impresión y tamaño de página */
+        @page { size: A4; margin: 0; }
+        * { box-sizing: border-box; }
+        body { 
+            font-family: Arial, sans-serif; 
+            font-size: 9px; 
+            margin: 0; 
+            padding: 0;
+            background-color: #555; /* Fondo oscuro fuera de la hoja */
+        }
+        
+        /* Contenedor de la hoja A4 */
+        .page { 
+            width: 210mm; 
+            height: 297mm; 
+            background: white; 
+            margin: 20px auto; 
+            padding: 10mm 15mm; 
+            position: relative;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            page-break-after: always;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Contenedor interno para empujar la línea final hacia abajo */
+        .content-wrapper {
+            flex-grow: 1;
+        }
+
+        /* Colores y estilos globales */
+        .text-blue { color: #043185; }
+        .bg-blue { background-color: #043185; color: white; }
+        .bold { font-weight: bold; }
+        .text-center { text-align: center; }
+        
+        /* Modificación para que los radio buttons sean azules */
+        input[type="radio"] { 
+            accent-color: #043185; 
+            margin: 0 4px 0 0; 
+            width: 10px; 
+            height: 10px; 
+        }
+
+        /* Encabezado */
+        .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
+        .radios-left { font-size: 8px; line-height: 1.2; display: flex; flex-direction: column; gap: 2px;}
+        .radios-left div { display: flex; align-items: center; }
+        
+        .main-title { flex-grow: 1; text-align: center; font-size: 16px; font-weight: bold; color: #043185; line-height: 1.2; padding-top: 10px; }
+        
+        /* Bloque de Información del Proveedor y Empresa */
+        .info-block { border-top: 4px solid #043185; border-bottom: 4px solid #043185; padding: 5px 0; display: flex; justify-content: space-between; align-items: stretch; margin-bottom: 8px;}
+        
+        .provider-box { display: flex; width: 38%; border: 1px solid black; }
+        .provider-left-blank { width: 60px; border-right: 1px solid black; background-color: #fff;}
+        .provider-content { flex-grow: 1; }
+        .provider-title { font-size: 8px; padding: 3px; font-weight: bold; display: flex; align-items: center; border-bottom: 1px solid black;}
+        .provider-fields { padding: 3px; font-size: 8px; line-height: 1.6; }
+        .provider-fields div { display: flex; align-items: center; }
+
+        .logo-box { width: 28%; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        
+        .company-info { width: 34%; text-align: right; font-size: 8.5px; line-height: 1.4; display: flex; flex-direction: column; justify-content: center; color: black; font-weight: normal; }
+        
+        /* Títulos de sección */
+        .section-title { text-align: center; color: #043185; font-weight: bold; font-size: 11px; margin: 5px 0 3px 0; }
+        .section-title-line { border-top: 4px solid #043185; margin: 5px 0 3px 0; padding-top: 3px; text-align: center; color: #043185; font-weight: bold; font-size: 11px; }
+        
+        /* Tablas */
+        table { width: 100%; border-collapse: collapse; border: 1px solid black; margin-bottom: 4px; font-size: 8px; }
+        th, td { border: 1px solid black; padding: 2px 4px; text-align: left; vertical-align: middle; height: 15px; }
+        th { font-weight: bold; text-align: center; }
+        
+        /* Caja de OBSERVACIONES */
+        .observations-box { 
+            border: 1px solid black; 
+            height: 22px; 
+            position: relative; 
+            margin-bottom: 4px;
+            padding: 3px 4px;
+        }
+        .observations-label { 
+            font-size: 8px; 
+            font-weight: bold; 
+            color: #043185; 
+        }
+        
+        /* Cajas de fotografías con leyenda - altura 144px (igual que FORMATO 1 y 2) */
+        .photo-grid-3 { display: flex; gap: 5px; margin-bottom: 4px; }
+        .photo-box-captioned { 
+            flex: 1; 
+            border: 1px solid black; 
+            display: flex; 
+            flex-direction: column; 
+            height: 144px;
+        }
+        .photo-empty { flex-grow: 1; }
+        .photo-caption { 
+            background-color: #043185; 
+            color: white; 
+            font-size: 7px; 
+            text-align: center; 
+            padding: 3px 2px; 
+            font-weight: bold; 
+            line-height: 1.2;
+            min-height: 14px;
+        }
+        
+        /* Footer hoja 1 y 2 */
+        .bottom-line { border-top: 6px solid #043185; margin-top: auto; }
+
+        /* Footer (Sección de firmas) - mismo formato que FORMATO 1 y 2 */
+        .footer-section { margin-top: 3px; margin-bottom: 5px;}
+        .footer-title { display: flex; align-items: center; font-size: 10px; padding: 3px 5px; margin-bottom: 5px; font-weight: bold;}
+        
+        /* footer-grid: gap 5px = mismo gap que photo-grid-3;
+           height 144px = mismo alto que las cajas de fotos */
+        .footer-grid { display: flex; gap: 5px; height: 144px; }
+        /* footer-blank: ancho exacto de una caja de foto (1/3 del ancho útil) */
+        .footer-blank { width: calc((100% - 10px) / 3); flex-shrink: 0; border: 1px solid black; }
+        
+        .footer-col-middle { flex: 1.6; display: flex; flex-direction: column; gap: 5px; }
+        .footer-col-right { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+        
+        .box-container { border: 1px solid black; flex: 1; display: flex; flex-direction: column; }
+        .box-header { padding: 3px 5px; font-size: 8px; font-weight: bold; display: flex; align-items: center; border-bottom: 1px solid black;}
+        .box-body { flex: 1; padding: 5px; font-size: 8px; line-height: 1.6;}
+        .box-body div { display: flex; align-items: center; }
+
+        @media print {
+            body { background-color: white; }
+            .page { margin: 0; box-shadow: none; border: none; width: 100%; height: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ====================== PÁGINA 1 ====================== -->
+<div class="page">
+    <div class="content-wrapper">
+        <div class="header-top">
+            <div class="radios-left text-blue">
+                <div style="background-color: #043185; width: 20px; height: 10px; margin-bottom:2px;"></div>
+                <div><input type="radio" checked> Dirección:</div>
+                <div><input type="radio" checked> Colonia:</div>
+                <div><input type="radio" checked> </div>
+                <div><input type="radio" checked> </div>
+                <div><input type="radio" checked> </div>
+            </div>
+            <div class="main-title">
+                ORDEN DE SERVICIO<br>DE MANTENIMIENTO
+                <div style="font-size:11px;font-weight:bold;color:#dc2626;margin-top:3px;letter-spacing:1px;">FOLIO: <span class="pdf-folio-value">—</span></div>
+            </div>
+        </div>
+
+        <div class="info-block">
+            <div class="provider-box">
+                <div class="provider-left-blank"></div>
+                <div class="provider-content">
+                    <div class="provider-title bg-blue"><input type="radio" checked> EMPLEADO DEL PROVEDOR</div>
+                    <div class="provider-fields text-blue">
+                        <div><input type="radio" checked> NOMBRE:</div>
+                        <div><input type="radio" checked> CARGO:</div>
+                        <div><input type="radio" checked> CELULAR:</div>
+                    </div>
+                </div>
+            </div>
+            <div class="logo-box">
+                <img src="https://i.ibb.co/217VSVMh/logo-hdm.png" alt="Logo HDM" style="max-height: 50px; max-width: 100%;">
+            </div>
+            <div class="company-info">
+                Dirección: Av. Industria No. 102 Bodega 13<br>
+                Col. Los Reyes Iztacala, Tlalnepantla de Baz<br>
+                Edo. de Méx. C.P. 54090<br>
+                Tel: 55-5365-4165 55-2628-3094
+            </div>
+        </div>
+
+        <div class="section-title">EQUIPO DE TRATAMIENTO</div>
+        <table>
+            <tr>
+                <th style="width: 20%;">EQUIPO</th>
+                <th style="width: 13%;">OP. VÁLVULA</th>
+                <th style="width: 13%;">RETROLAVADO</th>
+                <th style="width: 15%;">BY - PASS</th>
+                <th style="width: 15%;">VAL. ENERGIZADA</th>
+                <th style="width: 12%;">CAMBIOS MINERALES</th>
+                <th style="width: 12%;">MANGUERAS REACH</th>
+            </tr>
+            <tr><td>F. LECHO PROFUNDO</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>F. CARBÓN ACTIVADO</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>F. MULTIMEDIA</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>F. SUAVIZADOR</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>TANQUE SALMUERA</td><td></td><td class="text-center">LIMPIEZA</td><td></td><td colspan="2" class="text-center">REVISIÓN DE INTERNOS</td><td></td></tr>
+        </table>
+
+        <div class="section-title-line">EQUIPO OSMOSIS INVERSA</div>
+        <table>
+            <tr>
+                <td style="width: 14%;">PRESIÓN ENTRADA</td><td style="width: 13%;"></td>
+                <td style="width: 15%;">FLUJO PRODUCTO</td><td style="width: 13%;"></td>
+                <td style="width: 32%; white-space: nowrap;">ELECTRONIVEL ARRABQUE / PARO</td><td style="width: 13%;"></td>
+            </tr>
+            <tr>
+                <td>PRESIÓN SALIDA</td><td></td>
+                <td>FLUJO RECHAZADO</td><td></td>
+                <td style="white-space: nowrap;">ELECTRONIVEL PROTECCIÓN BAJO NIVEL</td><td></td>
+            </tr>
+            <tr>
+                <td>PREFILTRO</td><td></td>
+                <td>REMPLAZO</td><td></td>
+                <td>CONEXIONES HIDRAULICAS</td><td></td>
+            </tr>
+            <tr>
+                <td>MEMBRANA (S)</td><td></td>
+                <td>REMPLAZO</td><td></td>
+                <td>MANGUERAS HIDRÁULICAS</td><td></td>
+            </tr>
+            <tr>
+                <td>T ALMACENAMIENTO</td><td></td>
+                <td>FLOTADOR MÉCANICO</td><td></td>
+                <td>VÁLVULA SOLENOIDE</td><td></td>
+            </tr>
+            <tr>
+                <td>BOMBA O.I.</td><td></td>
+                <td>T. HIDRONEUMÁTICO</td><td></td>
+                <td>INTERRUPTOR DE PRESIÓN</td><td></td>
+            </tr>
+            <tr>
+                <td>MANOMETRO</td><td></td>
+                <td>LLAVES DE MUESTRA</td><td></td>
+                <td>REMPLAZO</td><td></td>
+            </tr>
+        </table>
+
+        <div class="section-title-line">EQUIPO DE FILTRACIÓN</div>
+        <table>
+            <tr>
+                <td style="width: 16.66%;">F. PULIDOR</td><td style="width: 16.66%;"></td>
+                <td class="text-center" style="width: 16.66%;">REMPLAZO</td><td style="width: 16.66%;"></td>
+                <td class="text-center" style="width: 16.66%;">OPERACIÓN</td><td style="width: 16.66%;"></td>
+            </tr>
+            <tr>
+                <td>F. CARBÓN</td><td></td>
+                <td class="text-center">REMPLAZO</td><td></td>
+                <td class="text-center">OPERACIÓN</td><td></td>
+            </tr>
+            <tr>
+                <td>LAMPARA UV</td><td class="text-center">ENERGIZADA</td>
+                <td></td><td></td>
+                <td class="text-center">MARCA</td><td></td>
+            </tr>
+        </table>
+
+        <div class="section-title-line">ANALISIS FISICO - QUIMICO DEL AGUA</div>
+        <table>
+            <tr>
+                <th style="width: 28%; color: black;">MAX PERMISIBLES</th>
+                <th style="width: 12%; color: black;">CLORO<br>0.5</th>
+                <th style="width: 12%; color: black;">PH<br>6.5-8.5</th>
+                <th style="width: 12%; color: black;">DUREZA<br>0-100</th>
+                <th style="width: 12%; color: black;">TDS<br>0-500</th>
+                <th style="width: 12%; color: black;">ALCALINIDAD<br>0-150</th>
+                <th style="width: 12%; color: black;">CLORUROS<br>0-250</th>
+            </tr>
+            <tr><td>AGUA CRUDA</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>AGUA SUAVISADA</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>AGUA OSMÓTICA</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>LIMPIEZA GENERAL DE EQUIPO</td><td></td><td></td><td colspan="2" class="text-center">IDENTIFICACIÓN DE EQUIPOS</td><td></td><td class="text-center">-</td></tr>
+            <tr><td>IDENTIFICACIÓN DE LÍNEAS HIDRÁULICAS</td><td></td><td></td><td colspan="2" class="text-center">REGISTROS DE BITÁCORAS</td><td></td><td class="text-center">-</td></tr>
+        </table>
+
+        <div class="observations-box">
+            <div class="observations-label">OBSERVACIONES</div>
+        </div>
+
+        <div class="photo-grid-3">
+            <div class="photo-box-captioned">
+                <div class="photo-empty"></div>
+                <div class="photo-caption">LLEGADA A ZONA DE FILTROS</div>
+            </div>
+            <div class="photo-box-captioned">
+                <div class="photo-empty"></div>
+                <div class="photo-caption">CONSUMIBLES NUEVOS</div>
+            </div>
+            <div class="photo-box-captioned">
+                <div class="photo-empty"></div>
+                <div class="photo-caption">CONSUMIBLES USADOS</div>
+            </div>
+        </div>
+
+        <div class="footer-section">
+            <div class="footer-title bg-blue"><input type="radio" checked> DATOS DE QUIEN RECIBE EL TRABAJO</div>
+            
+            <div class="footer-grid">
+                <div class="footer-blank"></div>
+                
+                <div class="footer-col-middle">
+                    <div class="box-container">
+                        <div class="box-header bg-blue"><input type="radio" checked> EMPLEADO QUIEN RECIBE EL TRABAJO</div>
+                        <div class="box-body text-blue">
+                            <div><input type="radio" checked> NOMBRE:</div>
+                            <div><input type="radio" checked> CARGO:</div>
+                            <div><input type="radio" checked> CELULAR:</div>
+                        </div>
+                    </div>
+                    <div class="box-container">
+                        <div class="box-header bg-blue"><input type="radio" checked> COMENTARIO DE SALIDA</div>
+                        <div class="box-body"></div>
+                    </div>
+                </div>
+
+                <div class="footer-col-right">
+                    <div class="box-container">
+                        <div class="box-header bg-blue"><input type="radio" checked> ESTATUS</div>
+                        <div class="box-body"></div>
+                    </div>
+                    <div class="box-container">
+                        <div class="box-header bg-blue"><input type="radio" checked> FIRMA</div>
+                        <div class="box-body"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-line"></div>
+</div>
+
+<!-- ====================== PÁGINA 2 ====================== -->
+<div class="page">
+    <div class="content-wrapper">
+        <div class="header-top">
+            <div class="radios-left text-blue">
+                <div style="background-color: #043185; width: 20px; height: 10px; margin-bottom:2px;"></div>
+                <div><input type="radio" checked> Dirección:</div>
+                <div><input type="radio" checked> Colonia:</div>
+                <div><input type="radio" checked> </div>
+                <div><input type="radio" checked> </div>
+                <div><input type="radio" checked> </div>
+            </div>
+            <div class="main-title">
+                ORDEN DE SERVICIO<br>DE MANTENIMIENTO
+                <div style="font-size:11px;font-weight:bold;color:#dc2626;margin-top:3px;letter-spacing:1px;">FOLIO: <span class="pdf-folio-value">—</span></div>
+            </div>
+        </div>
+
+        <div class="info-block">
+            <div class="provider-box">
+                <div class="provider-left-blank"></div>
+                <div class="provider-content">
+                    <div class="provider-title bg-blue"><input type="radio" checked> EMPLEADO DEL PROVEDOR</div>
+                    <div class="provider-fields text-blue">
+                        <div><input type="radio" checked> NOMBRE:</div>
+                        <div><input type="radio" checked> CARGO:</div>
+                        <div><input type="radio" checked> CELULAR:</div>
+                    </div>
+                </div>
+            </div>
+            <div class="logo-box">
+                <img src="https://i.ibb.co/217VSVMh/logo-hdm.png" alt="Logo HDM" style="max-height: 50px; max-width: 100%;">
+            </div>
+            <div class="company-info">
+                Dirección: Av. Industria No. 102 Bodega 13<br>
+                Col. Los Reyes Iztacala, Tlalnepantla de Baz<br>
+                Edo. de Méx. C.P. 54090<br>
+                Tel: 55-5365-4165 55-2628-3094
+            </div>
+        </div>
+
+        <!-- 4 filas x 3 columnas = 12 cajas de fotos. Todas con leyenda -->
+        <div class="photo-grid-3">
+            <div class="photo-box-captioned">
+                <div class="photo-empty"></div>
+                <div class="photo-caption">CABEZAL DE FILTROMULTIMEDIA</div>
+            </div>
+            <div class="photo-box-captioned">
+                <div class="photo-empty"></div>
+                <div class="photo-caption">CABEZAL DE FILTRO LECHO PROFUNDO</div>
+            </div>
+            <div class="photo-box-captioned">
+                <div class="photo-empty"></div>
+                <div class="photo-caption">CABEZAL DE FILTRO CARBON</div>
+            </div>
+        </div>
+
+        <div class="photo-grid-3">
+            <div class="photo-box-captioned">
+                <div class="photo-empty"></div>
+                <div class="photo-caption">CABEZAL DE FILTRO SUAIZADOR</div>
+            </div>
+            <div class="photo-box-captioned">
+                <div class="photo-empty"></div>
+                <div class="photo-caption">TANQUE DE SALMUERA ANTES</div>
+            </div>
+            <div class="photo-box-captioned">
+                <div class="photo-empty"></div>
+                <div class="photo-caption">SAL A SUMNISTRAR</div>
+            </div>
+        </div>
+
+        <div class="photo-grid-3">
+            <div class="photo-box-captioned">
+                <div class="photo-empty"></div>
+                <div class="photo-caption">TANQUE DE SALMUERA DESPUES</div>
+            </div>
+            <div class="photo-box-captioned">
+                <div class="photo-empty"></div>
+                <div class="photo-caption">FOTO DEL TINACO</div>
+            </div>
+            <div class="photo-box-captioned">
+                <div class="photo-empty"></div>
+                <div class="photo-caption">TANQUE DE SALMUERA DESPUES</div>
+            </div>
+        </div>
+
+        <div class="photo-grid-3">
+            <div class="photo-box-captioned">
+                <div class="photo-empty"></div>
+                <div class="photo-caption">LIMPIEZA DE EQUIPO</div>
+            </div>
+            <div class="photo-box-captioned">
+                <div class="photo-empty"></div>
+                <div class="photo-caption">BITACORA ACTULIZADA</div>
+            </div>
+            <div class="photo-box-captioned">
+                <div class="photo-empty"></div>
+                <div class="photo-caption">EQUIPO COMPLETO ANTES DE SALIR</div>
+            </div>
+        </div>
+
+        <div class="footer-section">
+            <div class="footer-title bg-blue"><input type="radio" checked> DATOS DE QUIEN RECIBE EL TRABAJO</div>
+            
+            <div class="footer-grid">
+                <div class="footer-blank"></div>
+                
+                <div class="footer-col-middle">
+                    <div class="box-container">
+                        <div class="box-header bg-blue"><input type="radio" checked> EMPLEADO QUIEN RECIBE EL TRABAJO</div>
+                        <div class="box-body text-blue">
+                            <div><input type="radio" checked> NOMBRE:</div>
+                            <div><input type="radio" checked> CARGO:</div>
+                            <div><input type="radio" checked> CELULAR:</div>
+                        </div>
+                    </div>
+                    <div class="box-container">
+                        <div class="box-header bg-blue"><input type="radio" checked> COMENTARIO DE SALIDA</div>
+                        <div class="box-body"></div>
+                    </div>
+                </div>
+
+                <div class="footer-col-right">
+                    <div class="box-container">
+                        <div class="box-header bg-blue"><input type="radio" checked> ESTATUS</div>
+                        <div class="box-body"></div>
+                    </div>
+                    <div class="box-container">
+                        <div class="box-header bg-blue"><input type="radio" checked> FIRMA</div>
+                        <div class="box-body"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-line"></div>
+</div>
+
+<script src="autollenado_pdf.js"></script>
+</body>
+</html>

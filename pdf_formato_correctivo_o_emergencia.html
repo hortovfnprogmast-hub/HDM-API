@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orden de Servicio Correctivo o Emergencia</title>
+    <style>
+        /* Configuraciones generales para impresión y tamaño de página */
+        @page { size: A4; margin: 0; }
+        * { box-sizing: border-box; }
+        body { 
+            font-family: Arial, sans-serif; 
+            font-size: 9px; 
+            margin: 0; 
+            padding: 0;
+            background-color: #555; /* Fondo oscuro fuera de la hoja */
+        }
+        
+        /* Contenedor de la hoja A4 */
+        .page { 
+            width: 210mm; 
+            height: 297mm; 
+            background: white; 
+            margin: 20px auto; 
+            padding: 10mm 15mm; 
+            position: relative;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            page-break-after: always;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Contenedor interno para empujar la línea final hacia abajo */
+        .content-wrapper {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Colores y estilos globales */
+        .text-blue { color: #043185; }
+        .bg-blue { background-color: #043185; color: white; }
+        .bold { font-weight: bold; }
+        .text-center { text-align: center; }
+        
+        /* Modificación para que los radio buttons sean azules */
+        input[type="radio"] { 
+            accent-color: #043185; 
+            margin: 0 4px 0 0; 
+            width: 10px; 
+            height: 10px; 
+        }
+
+        /* Encabezado */
+        .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
+        .radios-left { font-size: 8px; line-height: 1.2; display: flex; flex-direction: column; gap: 2px;}
+        .radios-left div { display: flex; align-items: center; }
+        
+        .main-title { flex-grow: 1; text-align: center; font-size: 16px; font-weight: bold; color: #043185; line-height: 1.2; padding-top: 10px; }
+        
+        /* Bloque de Información del Proveedor y Empresa */
+        /* Se eliminó el margin-bottom para poder centrar bien la sección de AREA abajo */
+        .info-block { border-top: 4px solid #043185; border-bottom: 4px solid #043185; padding: 5px 0; display: flex; justify-content: space-between; align-items: stretch; margin-bottom: 0; }
+        
+        .provider-box { display: flex; width: 38%; border: 1px solid black; }
+        .provider-left-blank { width: 60px; border-right: 1px solid black; background-color: #fff;}
+        .provider-content { flex-grow: 1; }
+        .provider-title { font-size: 8px; padding: 3px; font-weight: bold; display: flex; align-items: center; border-bottom: 1px solid black;}
+        .provider-fields { padding: 3px; font-size: 8px; line-height: 1.6; }
+        .provider-fields div { display: flex; align-items: center; }
+
+        .logo-box { width: 28%; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        
+        .company-info { width: 34%; text-align: right; font-size: 8.5px; line-height: 1.4; display: flex; flex-direction: column; justify-content: center; color: black; font-weight: normal; }
+        
+        /* Secciones de Franjas (azules) */
+        .section-bar { padding: 3px 5px; display: flex; font-weight: bold; font-size: 8.5px; align-items: center; margin-bottom: 2px; margin-top: 2px;}
+        
+        /* Cajas de fotografías y texto */
+        .photo-grid { display: flex; gap: 8px; margin-bottom: 2px; }
+        /* Altura extra de 10% (143px) */
+        .photo-box { flex: 1; height: 143px; border: 1px solid black; }
+        /* Altura doble (60px) */
+        .text-box { border: 1px solid black; min-height: 60px; padding: 5px; font-size: 8px; margin-bottom: 5px; }
+        
+        /* Footer hoja 1 y 2 */
+        .bottom-line { border-top: 6px solid #043185; margin-top: auto; }
+
+        /* Footer (Sección de firmas) */
+        .footer-section { margin-top: auto; margin-bottom: 5px;}
+        .footer-title { display: flex; align-items: center; font-size: 10px; padding: 3px 5px; margin-bottom: 8px; font-weight: bold;}
+        
+        .footer-grid { display: flex; gap: 10px; height: 130px; }
+        .footer-blank { width: 32%; border: 1px solid black; }
+        
+        .footer-col-middle { width: 44%; display: flex; flex-direction: column; gap: 10px; }
+        .footer-col-right { width: 24%; display: flex; flex-direction: column; gap: 10px; }
+        
+        .box-container { border: 1px solid black; flex: 1; display: flex; flex-direction: column; }
+        .box-header { padding: 3px 5px; font-size: 8px; font-weight: bold; display: flex; align-items: center; border-bottom: 1px solid black;}
+        .box-body { flex: 1; padding: 5px; font-size: 8px; line-height: 1.6;}
+        .box-body div { display: flex; align-items: center; }
+
+        @media print {
+            body { background-color: white; }
+            .page { margin: 0; box-shadow: none; border: none; width: 100%; height: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page">
+    <div class="content-wrapper">
+        <div class="header-top">
+            <div class="radios-left text-blue">
+                <div style="background-color: #043185; width: 20px; height: 10px; margin-bottom:2px;"></div>
+                <div><input type="radio" checked> Dirección:</div>
+                <div><input type="radio" checked> Colonia:</div>
+                <div><input type="radio" checked> </div>
+                <div><input type="radio" checked> </div>
+                <div><input type="radio" checked> </div>
+            </div>
+            <div class="main-title">
+                ORDEN DE SERVICIO<br>CORRECTIVO O EMERGENCIA
+                <div style="font-size:11px;font-weight:bold;color:#dc2626;margin-top:3px;letter-spacing:1px;">FOLIO: <span class="pdf-folio-value">—</span></div>
+            </div>
+        </div>
+
+        <div class="info-block">
+            <div class="provider-box">
+                <div class="provider-left-blank"></div>
+                <div class="provider-content">
+                    <div class="provider-title bg-blue"><input type="radio" checked> EMPLEADO DEL PROVEDOR</div>
+                    <div class="provider-fields text-blue">
+                        <div><input type="radio" checked> NOMBRE:</div>
+                        <div><input type="radio" checked> CARGO:</div>
+                        <div><input type="radio" checked> CELULAR:</div>
+                    </div>
+                </div>
+            </div>
+            <div class="logo-box">
+                <img src="https://i.ibb.co/217VSVMh/logo-hdm.png" alt="Logo HDM" style="max-height: 50px; max-width: 100%;">
+            </div>
+            <div class="company-info">
+                Dirección: Av. Industria No. 102 Bodega 13<br>
+                Col. Los Reyes Iztacala, Tlalnepantla de Baz<br>
+                Edo. de Méx. C.P. 54090<br>
+                Tel: 55-5365-4165 55-2628-3094
+            </div>
+        </div>
+
+        <div style="font-size: 8.5px; padding: 6px 0; color: black;">
+            <div style="display: flex; align-items: center; margin-bottom: 4px;">
+                <input type="radio" checked> <span style="margin-left: 3px;">AREA: DATOS DE FALLA/EQUIPO</span>
+            </div>
+            <div style="display: flex; align-items: center;">
+                <input type="radio" checked> <span style="margin-left: 3px;">SUB AREA: SE REQUIERE DE LA INSTALACIÓN DE UNA CAJA REGISTRADORA</span>
+            </div>
+        </div>
+        <div style="border-top: 4px solid #043185; margin-bottom: 5px;"></div>
+
+        <div class="section-bar bg-blue">
+            <div style="width: 33%;"><input type="radio" checked> EVIDENCIA FOTOGRÁFICA</div>
+            <div style="width: 34%; text-align: center;">FALLA</div>
+            <div style="width: 33%;"></div>
+        </div>
+        
+        <div class="photo-grid">
+            <div class="photo-box"></div><div class="photo-box"></div><div class="photo-box"></div>
+        </div>
+
+        <div class="section-bar bg-blue">
+            <input type="radio" checked> DESCRIPCIÓN DE FALLA
+        </div>
+        <div class="text-box">
+            
+        </div>
+
+        <div class="section-bar bg-blue">
+            <div style="width: 33%;"><input type="radio" checked> EVIDENCIA FOTOGRÁFICA</div>
+            <div style="width: 34%; text-align: center;">TRABAJO DURANTE</div>
+            <div style="width: 33%;"></div>
+        </div>
+        
+        <div class="photo-grid">
+            <div class="photo-box"></div><div class="photo-box"></div><div class="photo-box"></div>
+        </div>
+
+        <div class="section-bar bg-blue">
+            <div style="width: 33%;"><input type="radio" checked> EVIDENCIA FOTOGRÁFICA</div>
+            <div style="width: 34%; text-align: center;">TRABAJO REALIZADOS</div>
+            <div style="width: 33%;"></div>
+        </div>
+        
+        <div class="photo-grid">
+            <div class="photo-box"></div><div class="photo-box"></div><div class="photo-box"></div>
+        </div>
+
+        <div class="section-bar bg-blue">
+            <input type="radio" checked> DESCRIPCIÓN DEL TRABAJO
+        </div>
+        <div class="text-box">
+            
+        </div>
+
+        <div class="footer-section">
+            <div class="footer-title bg-blue"><input type="radio" checked> DATOS DE QUIEN RECIBE EL TRABAJO</div>
+            
+            <div class="footer-grid">
+                <div class="footer-blank"></div>
+                
+                <div class="footer-col-middle">
+                    <div class="box-container">
+                        <div class="box-header bg-blue"><input type="radio" checked> EMPLEADO QUIEN RECIBE EL TRABAJO</div>
+                        <div class="box-body text-blue">
+                            <div><input type="radio" checked> NOMBRE:</div>
+                            <div><input type="radio" checked> CARGO:</div>
+                            <div><input type="radio" checked> CELULAR:</div>
+                        </div>
+                    </div>
+                    <div class="box-container">
+                        <div class="box-header bg-blue"><input type="radio" checked> COMENTARIO DE SALIDA</div>
+                        <div class="box-body"></div>
+                    </div>
+                </div>
+
+                <div class="footer-col-right">
+                    <div class="box-container">
+                        <div class="box-header bg-blue"><input type="radio" checked> ESTATUS</div>
+                        <div class="box-body"></div>
+                    </div>
+                    <div class="box-container">
+                        <div class="box-header bg-blue"><input type="radio" checked> FIRMA</div>
+                        <div class="box-body"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    <div class="bottom-line"></div>
+</div>
+
+<div class="page">
+    <div class="content-wrapper">
+        <div class="header-top">
+            <div class="radios-left text-blue">
+                <div style="background-color: #043185; width: 20px; height: 10px; margin-bottom:2px;"></div>
+                <div><input type="radio" checked> Dirección:</div>
+                <div><input type="radio" checked> Colonia:</div>
+                <div><input type="radio" checked> 0</div>
+                <div><input type="radio" checked> 0</div>
+                <div><input type="radio" checked> 0</div>
+            </div>
+            <div class="main-title">
+                ORDEN DE SERVICIO<br>CORRECTIVO O EMERGENCIA
+                <div style="font-size:11px;font-weight:bold;color:#dc2626;margin-top:3px;letter-spacing:1px;">FOLIO: <span class="pdf-folio-value">—</span></div>
+            </div>
+        </div>
+
+        <div class="info-block">
+            <div class="provider-box">
+                <div class="provider-left-blank"></div>
+                <div class="provider-content">
+                    <div class="provider-title bg-blue"><input type="radio" checked> EMPLEADO DEL PROVEDOR</div>
+                    <div class="provider-fields text-blue">
+                        <div><input type="radio" checked> NOMBRE:</div>
+                        <div><input type="radio" checked> CARGO:</div>
+                        <div><input type="radio" checked> CELULAR:</div>
+                    </div>
+                </div>
+            </div>
+            <div class="logo-box">
+                <img src="https://i.ibb.co/217VSVMh/logo-hdm.png" alt="Logo HDM" style="max-height: 50px; max-width: 100%;">
+            </div>
+            <div class="company-info">
+                Dirección: Av. Industria No. 102 Bodega 13<br>
+                Col. Los Reyes Iztacala, Tlalnepantla de Baz<br>
+                Edo. de Méx. C.P. 54090<br>
+                Tel: 55-5365-4165 55-2628-3094
+            </div>
+        </div>
+
+        <div style="font-size: 8.5px; padding: 6px 0; color: black;">
+            <div style="display: flex; align-items: center; margin-bottom: 4px;">
+                <input type="radio" checked> <span style="margin-left: 3px;">AREA: DATOS DE FALLA/EQUIPO</span>
+            </div>
+            <div style="display: flex; align-items: center;">
+                <input type="radio" checked> <span style="margin-left: 3px;">SUB AREA: SE REQUIERE DE LA INSTALACIÓN DE UNA CAJA REGISTRADORA</span>
+            </div>
+        </div>
+        <div style="border-top: 4px solid #043185; margin-bottom: 2px;"></div>
+
+        <div class="section-bar bg-blue" style="margin-top: 2px; margin-bottom: 0;">
+            <input type="radio" checked> SOPORTE FÍSICO / ORDEN DE COMPRA FIRMADA
+        </div>
+        <div style="border: 1px solid black; flex-grow: 1; margin-bottom: 10px;"></div>
+        
+    </div>
+    <div class="bottom-line"></div>
+</div>
+
+<script src="autollenado_correctivo.js"></script>
+</body>
+</html>

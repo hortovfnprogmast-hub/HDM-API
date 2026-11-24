@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio | Portal Operativo HDM</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="hdm-common.js"></script>
+
+    <style>
+        :root {
+            --primary-blue: #005B9A;
+            --primary-dark: #004575;
+            --light-blue: #eef2ff;
+            --bg-color: #f8fafc;
+            --text-main: #1E293B;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- HEADER --- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            z-index: 50;
+        }
+
+        .header-left { display: flex; align-items: center; gap: 15px; }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-main);
+            padding: 5px;
+        }
+
+        .header-title {
+            margin: 0;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            display: none;
+        }
+
+        @media (min-width: 768px) { .header-title { display: block; } }
+
+        .header-right { display: flex; align-items: center; gap: 12px; }
+
+        .user-info { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.2; }
+        .user-info .name { font-size: 13px; font-weight: 700; color: var(--text-main); text-transform: uppercase; }
+        .user-info .role { font-size: 11px; color: var(--text-muted); }
+
+        .user-initial {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: var(--primary-blue);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        /* --- LAYOUT PRINCIPAL --- */
+        .main-layout { display: flex; flex: 1; overflow: hidden; }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 260px;
+            background: white;
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                height: calc(100vh - 60px);
+                transform: translateX(-100%);
+                z-index: 40;
+            }
+            .sidebar.open { transform: translateX(0); }
+        }
+
+        /* --- CONTENIDO PRINCIPAL --- */
+        .content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .welcome-box {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+        }
+
+        .welcome-box h1 { margin: 0 0 5px 0; font-size: 22px; color: var(--text-main); }
+        .welcome-box h2 { margin: 0 0 10px 0; font-size: 28px; color: var(--primary-blue); text-transform: uppercase; }
+        .welcome-box p { margin: 0; color: var(--text-muted); font-size: 14px; }
+
+        /* Tarjetas de estado (folio + sucursal) */
+        .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        @media (max-width: 480px) { .status-grid { grid-template-columns: 1fr; } }
+        .status-card { padding: 14px; border-radius: 10px; text-align: center; }
+        .status-card.folio { background: #eff6ff; border: 1px solid #dbeafe; }
+        .status-card.branch { background: #ecfdf5; border: 1px solid #d1fae5; }
+        .status-card .lbl { font-size: 10px; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 4px; }
+        .status-card.folio .lbl { color: #1d4ed8; }
+        .status-card.branch .lbl { color: #059669; }
+        .status-card .val { font-size: 16px; font-weight: 800; }
+        .status-card.folio .val { color: #1e3a8a; }
+        .status-card.branch .val { color: #065f46; }
+
+        /* Botones de acción rápida */
+        .actions-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 20px; }
+        @media (min-width: 640px) { .actions-grid { grid-template-columns: repeat(4, 1fr); } }
+        .action-btn {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 18px 10px; background: white; border-radius: 12px; border: 1px solid var(--border-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04); cursor: pointer; transition: all 0.2s;
+            text-align: center;
+        }
+        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.08); border-color: var(--primary-blue); }
+        .action-btn:active { transform: scale(0.97); }
+        .action-btn .icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; margin-bottom: 8px; }
+        .action-btn .icon .material-symbols-outlined { font-size: 22px; }
+        .action-btn .label { font-size: 11px; font-weight: 700; color: var(--text-main); line-height: 1.2; }
+
+        /* Cámara */
+        #cameraSection { margin-top: 20px; }
+        #cameraSection .cam-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding: 0 4px; }
+        #cameraSection .cam-header span.lbl { font-size: 12px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 6px; }
+        #cameraSection .cam-header button { font-size: 11px; font-weight: 700; color: var(--text-muted); background: #f1f5f9; padding: 4px 10px; border-radius: 6px; border: none; cursor: pointer; }
+        #cameraSection .cam-header button:hover { color: #dc2626; }
+        #reader { width: 100%; border-radius: 12px; border: 2px solid var(--border-color); overflow: hidden; }
+        #reader video { object-fit: cover; border-radius: 12px; }
+
+        .logout-btn {
+            margin-top: 20px;
+            padding: 10px 22px;
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        .logout-btn:hover { background-color: #dc2626; }
+
+        /* Modal de folios */
+        #modalFolios { background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); }
+        #modalFolios .modal-box { background: white; padding: 20px; border-radius: 16px; width: 100%; max-width: 400px; max-height: 80vh; display: flex; flex-direction: column; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        #modalFolios h3 { font-size: 16px; font-weight: 800; color: var(--primary-blue); margin: 0 0 12px 0; text-align: center; text-transform: uppercase; letter-spacing: 0.5px; }
+        #modalFolios .modal-body { overflow-y: auto; flex: 1; font-size: 13px; }
+        #modalFolios table { width: 100%; border-collapse: collapse; }
+        #modalFolios th { background: #f1f5f9; color: #475569; padding: 8px; border-bottom: 2px solid #e2e8f0; text-align: left; font-size: 11px; text-transform: uppercase; }
+        #modalFolios td { padding: 8px; border-bottom: 1px solid #f1f5f9; }
+        #modalFolios .close-btn { margin-top: 14px; width: 100%; padding: 12px; background: #ef4444; color: white; font-weight: 700; border: none; border-radius: 10px; cursor: pointer; }
+        #modalFolios .close-btn:hover { background: #dc2626; }
+    </style>
+</head>
+<body>
+
+    <!-- === HEADER === -->
+    <header class="header">
+        <div class="header-left">
+            <button class="menu-btn" id="toggle-menu"><i data-lucide="menu"></i></button>
+            <img src="https://i.ibb.co/rCsz6hh/LOGOTIPO.png" alt="Logo HDM" height="35">
+            <h1 class="header-title">HDM · Sistemas de Filtración de Agua S.A. de C.V.</h1>
+        </div>
+        
+        <div class="header-right">
+            <div class="user-info">
+                <span class="name" id="header-name">Usuario</span>
+                <span class="role" id="header-role">---</span>
+            </div>
+            <div class="user-initial" id="user-initial">U</div>
+        </div>
+    </header>
+
+    <!-- === LAYOUT === -->
+    <div class="main-layout">
+        
+        <aside class="sidebar" id="sidebar"></aside>
+
+        <main class="content">
+            
+            <!-- Welcome box -->
+            <div class="welcome-box">
+                <img src="https://i.ibb.co/rCsz6hh/LOGOTIPO.png" alt="Logo HDM" style="height: 60px; margin-bottom: 10px; object-fit: contain;">
+                <h1>Bienvenido</h1>
+                <h2 id="welcome-name">Usuario</h2>
+                <p>Selecciona una opción del menú lateral o de las tarjetas siguientes para comenzar.</p>
+
+                <!-- Estado: folio y sucursal activos -->
+                <div class="status-grid">
+                    <div class="status-card folio">
+                        <div class="lbl">Folio Generado</div>
+                        <div class="val" id="folioDisp">No generado</div>
+                    </div>
+                    <div class="status-card branch">
+                        <div class="lbl">Sucursal Detectada</div>
+                        <div class="val" id="resBranch">Sin escanear</div>
+                    </div>
+                </div>
+
+                <!-- Acciones rápidas -->
+                <div class="actions-grid">
+                    <button class="action-btn" id="btnGenerarFolio" onclick="generarFolioManual()">
+                        <div class="icon" style="background:#1e293b;"><span class="material-symbols-outlined">note_add</span></div>
+                        <span class="label">Generar Folio</span>
+                    </button>
+                    <button class="action-btn" onclick="activarCamara()">
+                        <div class="icon" style="background:#2563eb;"><span class="material-symbols-outlined">location_searching</span></div>
+                        <span class="label">Escanear Sucursal</span>
+                    </button>
+                    <button class="action-btn" onclick="openFolios()">
+                        <div class="icon" style="background:#dc2626;"><span class="material-symbols-outlined">list_alt</span></div>
+                        <span class="label">Folios Ingresados</span>
+                    </button>
+                    <button class="action-btn" onclick="goTo('RegistroQR')">
+                        <div class="icon" style="background:#1e293b;"><span class="material-symbols-outlined">qr_code_scanner</span></div>
+                        <span class="label">Registro por QR</span>
+                    </button>
+                </div>
+
+                <!-- Cámara (oculta hasta activarla) -->
+                <div id="cameraSection" class="hidden">
+                    <div class="cam-header">
+                        <span class="lbl"><span class="material-symbols-outlined" style="color:#ef4444; animation: pulse 1.5s infinite;">fiber_manual_record</span> Escaneando...</span>
+                        <button onclick="cerrarCamara()">CERRAR CÁMARA</button>
+                    </div>
+                    <div id="reader"></div>
+                </div>
+
+                <!-- Servicios -->
+                <div class="actions-grid" style="margin-top: 25px;">
+                    <button class="action-btn" onclick="goTo('ServicioCorrectivo')">
+                        <div class="icon" style="background:#4f46e5;"><span class="material-symbols-outlined">build</span></div>
+                        <span class="label">Orden Correctivo</span>
+                    </button>
+                    <button class="action-btn" onclick="goTo('ServicioInstalaciones')">
+                        <div class="icon" style="background:#f97316;"><span class="material-symbols-outlined">precision_manufacturing</span></div>
+                        <span class="label">Instalaciones</span>
+                    </button>
+                    <button class="action-btn" onclick="goTo('ServicioMantenimiento')">
+                        <div class="icon" style="background:#0d9488;"><span class="material-symbols-outlined">engineering</span></div>
+                        <span class="label">Mantenimiento</span>
+                    </button>
+                    <button class="action-btn" onclick="goTo('ServicioReporteVisita')">
+                        <div class="icon" style="background:#64748b;"><span class="material-symbols-outlined">assignment_turned_in</span></div>
+                        <span class="label">Reporte Visita</span>
+                    </button>
+                </div>
+
+                <button class="logout-btn" onclick="cerrarSesion()">
+                    <span class="material-symbols-outlined" style="font-size: 18px;">logout</span> CERRAR SESIÓN
+                </button>
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- === MODAL DE FOLIOS === -->
+    <div id="modalFolios" class="hidden fixed top-0 left-0 w-full h-full z-50" style="display:none; align-items:center; justify-content:center; padding: 16px;">
+        <div class="modal-box">
+            <h3>Historial (Ayer y Hoy)</h3>
+            <div class="modal-body" id="tableContent">Cargando datos...</div>
+            <button class="close-btn" onclick="cerrarModalFolios()">CERRAR</button>
+        </div>
+    </div>
+
+    <script>
+        // 🔴🔴 PEGA AQUÍ TU ENLACE DE GOOGLE APPS SCRIPT 🔴🔴
+        const API_URL = "https://script.google.com/macros/s/AKfycbw-2aFfgaRuLW74QTMFyO_WVLfPA89TJZN7C-B5N5_MUexsAlV6po-5Q2OS8GgTeuoibA/exec";
+
+        let html5QrCode;
+        let globalFolio = "";
+        let globalBranch = "";
+        let globalUserName = "";
+
+        const URL_MAP = {
+            'ServicioCorrectivo': 'https://docs.google.com/forms/d/e/1FAIpQLSexALVRaCItCODgce3_1U-sfRaMAQq365o57xIJvikpNMc40A/viewform?usp=pp_url&entry.833549862=HDM-0',
+            'ServicioInstalaciones': 'https://docs.google.com/forms/d/e/1FAIpQLSczsSDydxhwDe6Up62D0dd3R6DZND5wQ1nvgySBAXkNm0fTNA/viewform?usp=pp_url&entry.1407249899=HDM-0',
+            'ServicioMantenimiento': 'https://docs.google.com/forms/d/e/1FAIpQLSdAWJ86UbY8cWq76Lzv3AJjfgkQp6JyNe7lClGYa9JePJ4jmw/viewform?usp=pp_url&entry.1296392221=HDM-0',
+            'ServicioReporteVisita': 'https://docs.google.com/forms/d/e/1FAIpQLSfj6ZjnKHhc3h-HGGj2q7HcRTuYOcLvQnMws8K3998V5hh_cQ/viewform?usp=pp_url&entry.1483243805=HDM-0',
+            'RegistroQR': 'https://hdmordendeservicios-cloud.github.io/hdm/'
+        };
+
+        async function apiCall(action, params = {}) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: action, ...params })
+                });
+                return await response.json();
+            } catch (error) { return { status: 'error' }; }
+        }
+
+        // === Cargar datos del usuario desde localStorage ===
+        function cargarUsuario() {
+            const nombre = localStorage.getItem('hdm_nombre');
+            const cargo = localStorage.getItem('hdm_cargo');
+            const username = localStorage.getItem('hdm_username');
+            const folio = localStorage.getItem('hdm_folio');
+            const branch = localStorage.getItem('hdm_branch');
+
+            if (!nombre) {
+                // No hay sesión: regresar al login
+                window.location.replace('index.html');
+                return;
+            }
+
+            globalUserName = nombre;
+            document.getElementById('welcome-name').innerText = nombre;
+            document.getElementById('header-name').innerText = nombre;
+            document.getElementById('header-role').innerText = cargo || '---';
+            document.getElementById('user-initial').innerText = nombre.charAt(0).toUpperCase();
+
+            if (folio) {
+                globalFolio = folio;
+                document.getElementById('folioDisp').innerText = folio;
+                document.getElementById('btnGenerarFolio').classList.add('opacity-50');
+            }
+            if (branch) {
+                globalBranch = branch;
+                document.getElementById('resBranch').innerText = branch;
+            }
+        }
+
+        // === Generar folio ===
+        async function generarFolioManual() {
+            if (globalFolio !== "") return;
+
+            const folioUI = document.getElementById('folioDisp');
+            folioUI.innerText = "Creando...";
+            folioUI.classList.add("animate-pulse");
+
+            const res = await apiCall('getNextFolio', { userName: globalUserName });
+            
+            folioUI.classList.remove("animate-pulse");
+            if (res.status === 'success') {
+                globalFolio = res.folio;
+                localStorage.setItem('hdm_folio', globalFolio);
+                folioUI.innerText = globalFolio;
+                document.getElementById('btnGenerarFolio').classList.add('opacity-50');
+                
+                if (globalBranch !== "") {
+                    apiCall('updateFolioBranch', { folio: globalFolio, branchName: globalBranch });
+                }
+            } else {
+                folioUI.innerText = "Error, intente de nuevo";
+            }
+        }
+
+        // === Cámara / QR ===
+        function activarCamara() {
+            document.getElementById('cameraSection').classList.remove('hidden');
+            const config = { fps: 10, qrbox: { width: 220, height: 220 } };
+            html5QrCode = new Html5Qrcode("reader");
+            
+            html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess)
+            .catch(function() {
+                html5QrCode.start({ facingMode: "user" }, config, onScanSuccess);
+            });
+        }
+
+        function cerrarCamara() {
+            if (html5QrCode && html5QrCode.isScanning) {
+                html5QrCode.stop().catch(e => console.log(e));
+            }
+            document.getElementById('cameraSection').classList.add('hidden');
+        }
+
+        async function onScanSuccess(decodedText) {
+            document.getElementById('resBranch').innerHTML = '<span style="color:#10b981;">Buscando...</span>';
+            cerrarCamara(); 
+            
+            const r = await apiCall('getBranchFromCatalog', { qrContent: decodedText });
+            
+            if(r.status === 'success') {
+                globalBranch = r.branchName;
+                localStorage.setItem('hdm_branch', globalBranch);
+                document.getElementById('resBranch').innerText = globalBranch;
+                
+                if (globalFolio !== "") {
+                    apiCall('updateFolioBranch', { folio: globalFolio, branchName: globalBranch });
+                }
+            } else {
+                document.getElementById('resBranch').innerHTML = '<span style="color:#dc2626;">QR No Reconocido</span>';
+            }
+        }
+
+        // === Modal de folios ===
+        async function openFolios() {
+            const modal = document.getElementById('modalFolios');
+            modal.style.display = 'flex';
+            document.getElementById('tableContent').innerHTML = "<p style='margin-top:30px; color:#005B9A; font-weight:600;'>Descargando historial...</p>";
+            
+            const data = await apiCall('getRecentFolios');
+            
+            if(!data.folios || data.folios.length === 0) { 
+                document.getElementById('tableContent').innerHTML = "<p style='margin-top:30px; color:#64748b;'>Sin registros recientes.</p>"; 
+                return; 
+            }
+            
+            let h = '<table><thead><tr><th>FOLIO</th><th>SUCURSAL</th></tr></thead><tbody>';
+            data.folios.forEach(r => { h += `<tr><td style="font-weight:700; color:#1e293b;">${r.folio}</td><td style="color:#475569;">${r.sucursal}</td></tr>`; });
+            h += '</tbody></table>';
+            document.getElementById('tableContent').innerHTML = h;
+        }
+
+        function cerrarModalFolios() {
+            document.getElementById('modalFolios').style.display = 'none';
+        }
+
+        // === Navegación a servicios ===
+        function goTo(key) {
+            window.top.location.href = URL_MAP[key];
+        }
+
+        // === Cerrar sesión (usar la función de hdm-common.js si está, si no, limpiar aquí) ===
+        function cerrarSesion() {
+            if (typeof window.cerrarSesionHDM === 'function') {
+                window.cerrarSesionHDM();
+            } else {
+                localStorage.clear();
+                sessionStorage.clear();
+                window.location.href = 'index.html';
+            }
+        }
+
+        // === Init ===
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarUsuario();
+
+            // 1. Cargar menú dinámico desde menu_hdm.html
+            fetch('menu_hdm.html')
+                .then(r => r.text())
+                .then(html => {
+                    document.getElementById('sidebar').innerHTML = html;
+                    lucide.createIcons();
+                    if (typeof filtrarMenuPorPrivilegio === 'function') filtrarMenuPorPrivilegio();
+                    const linkInicio = document.getElementById('link-inicio');
+                    if (linkInicio) linkInicio.classList.add('active');
+                })
+                .catch(err => console.error('Error cargando menú:', err));
+
+            if (typeof initLogoutFlotante === 'function') initLogoutFlotante();
+            lucide.createIcons();
+
+            // 2. Botón hamburguesa (móvil)
+            const menuBtn = document.getElementById('toggle-menu');
+            const sidebar = document.getElementById('sidebar');
+            menuBtn.addEventListener('click', () => sidebar.classList.toggle('open'));
+        });
+    </script>
+</body>
+</html>
