@@ -186,12 +186,7 @@
 
         // ====== Init ======
         document.addEventListener('DOMContentLoaded', async () => {
-            // Bloqueo: solo admin
-            if (typeof esAdminHDM === 'function' && !esAdminHDM()) {
-                alert('Acceso restringido a administradores.');
-                window.location.replace('inicio.html');
-                return;
-            }
+            // El área de Controles es accesible para todos los usuarios (visible en el menú lateral).
             if (typeof initLogoutFlotante === 'function') initLogoutFlotante();
 
             const nombre = localStorage.getItem('hdm_nombre') || localStorage.getItem('nombre') || 'Usuario';

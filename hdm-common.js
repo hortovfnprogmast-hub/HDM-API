@@ -63,15 +63,9 @@
     }
 
     // === Filtrar menú por privilegio ===
-    // Oculta las secciones de administración (Reportes Globales y Controles)
-    // a los usuarios que no son administradores.
+    // El área de Controles (Admin) se muestra siempre visible para todos los usuarios.
     function filtrarMenuPorPrivilegio() {
         const cargo = (localStorage.getItem(HDM_KEYS.CARGO) || '').toUpperCase();
-        const admin = esAdminHDM();
-        ['menu-controles'].forEach(function (id) {
-            const sec = document.getElementById(id);
-            if (sec) sec.style.display = admin ? 'block' : 'none';
-        });
         return cargo;
     }
 

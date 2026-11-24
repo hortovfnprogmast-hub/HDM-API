@@ -35,8 +35,6 @@
         .data-table-container tbody tr { border-bottom: 1px solid #f1f5f9; }
         .btn-edit { background: #10b981; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; gap: 5px; font-size: 13px; margin: 2px; }
         .btn-pdf { background: var(--primary-blue, #043185); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; gap: 5px; font-size: 13px; margin: 2px; }
-        .fab-delete { position: fixed; bottom: 30px; right: 30px; background: var(--danger, #dc2626); color: white; border: none; border-radius: 50px; padding: 15px 25px; display: none; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 999; font-weight: 700; font-family: 'Inter', sans-serif; font-size: 14px; transition: transform 0.2s; }
-        .fab-delete:hover { background: #b91c1c; transform: scale(1.05); }
         #custom-confirm { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); z-index: 10001; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
         .modal-card-confirm { background: white; border-radius: 12px; padding: 24px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
         .confirm-icon { width: 50px; height: 50px; background: #fee2e2; color: var(--danger, #dc2626); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto; }
@@ -125,16 +123,6 @@ const HDM_Store = {
             }
             return null;
         }
-    },
-
-    eliminar(id) {
-        const todos = this.obtenerTodos().filter(r => r.id !== id);
-        localStorage.setItem(this.KEY, JSON.stringify(todos));
-    },
-
-    eliminarMultiples(ids) {
-        const todos = this.obtenerTodos().filter(r => !ids.includes(r.id));
-        localStorage.setItem(this.KEY, JSON.stringify(todos));
     },
 
     contar(estado, tipo) {
@@ -244,8 +232,8 @@ const HDM_App = {
         dashboardSection.innerHTML = `
             <div class="data-table-container">
                 <table>
-                    <thead><tr><th style="width:40px;"><input type="checkbox" onclick="HDM_App.toggleAll(this)"></th><th>Folio</th><th>Dirección</th><th>Fecha</th><th>Acción</th></tr></thead>
-                    <tbody id="tabla-reportes"><tr><td colspan="5" style="padding:30px;color:#64748b;">Cargando...</td></tr></tbody>
+                    <thead><tr><th>Folio</th><th>Dirección</th><th>Fecha</th><th>Acción</th></tr></thead>
+                    <tbody id="tabla-reportes"><tr><td colspan="4" style="padding:30px;color:#64748b;">Cargando...</td></tr></tbody>
                 </table>
             </div>`;
 
@@ -273,15 +261,6 @@ const HDM_App = {
             overlay.id = 'hdm-saving-overlay';
             overlay.innerHTML = '<div class="saving-card"><div class="saving-spinner"></div><p id="hdm-saving-msg">Guardando...</p></div>';
             document.body.appendChild(overlay);
-        }
-
-        // 7. Añadir FAB delete
-        if (!document.querySelector('.fab-delete')) {
-            const fabDelete = document.createElement('button');
-            fabDelete.className = 'fab-delete';
-            fabDelete.innerHTML = '<i data-lucide="trash-2" style="width:20px;height:20px"></i> Eliminar';
-            fabDelete.onclick = () => HDM_App.eliminarSeleccionados();
-            document.body.appendChild(fabDelete);
         }
 
         // 8. Añadir modal de confirmación si no existe
@@ -320,11 +299,8 @@ const HDM_App = {
     },
 
     configurarPermisos(privilegio) {
-        // Admin = privilegio '1' o cargo que contenga ADMIN
-        const cargo = (localStorage.getItem('hdm_cargo') || '').toUpperCase();
-        const esAdmin = privilegio === '1' || cargo.includes('ADMIN');
-        const menuControles = document.getElementById('menu-controles');
-        if (menuControles) menuControles.style.display = esAdmin ? 'block' : 'none';
+        // El área de Controles (Admin) se muestra siempre visible para todos los usuarios
+        // en el menú lateral (antes se ocultaba a los no-administradores).
     },
 
     // Helpers de usuario / folio / overlay
@@ -413,16 +389,13 @@ const HDM_App = {
 
         const formSection = document.getElementById('form-section');
         const dashboardSection = document.getElementById('dashboard-section');
-        const fabDelete = document.querySelector('.fab-delete');
 
         if (tab === 'nuevo') {
             if (formSection) formSection.style.display = 'block';
             if (dashboardSection) dashboardSection.style.display = 'none';
-            if (fabDelete) fabDelete.style.display = 'none';
         } else {
             if (formSection) formSection.style.display = 'none';
             if (dashboardSection) dashboardSection.style.display = 'block';
-            if (fabDelete) fabDelete.style.display = 'flex';
             this.renderTabla();
         }
 
@@ -464,19 +437,18 @@ const HDM_App = {
         }
 
         tbody.innerHTML = '';
+        // Acción única por pestaña: Guardados → Editar (seguir editando);
+        // Realizados / Aceptados / Rechazados → Ver PDF (solo visualización).
+        const esGuardados = (tab === 'guardados');
         filtered.forEach(rep => {
-            let acciones = `<div style="display:flex;gap:5px;justify-content:center;">
-                <button type="button" onclick="HDM_App.cargarEdicion('${rep.id}')" class="btn-edit"><i data-lucide="edit-2" style="width:14px"></i> Editar</button>`;
-            if (rep.estado === 'Realizado') {
-                acciones += `<button type="button" onclick="HDM_App.verPDFReporte('${rep.id}')" class="btn-pdf"><i data-lucide="file-text" style="width:14px"></i> PDF</button>`;
-            }
-            acciones += `</div>`;
+            const accion = esGuardados
+                ? `<button type="button" onclick="HDM_App.cargarEdicion('${rep.id}')" class="btn-edit"><i data-lucide="edit-2" style="width:14px"></i> Editar</button>`
+                : `<button type="button" onclick="HDM_App.verPDFReporte('${rep.id}')" class="btn-pdf"><i data-lucide="file-text" style="width:14px"></i> Ver PDF</button>`;
             const tr = document.createElement('tr');
-            tr.innerHTML = `<td><input type="checkbox" class="check-rep" data-id="${rep.id}"></td>
-                <td style="font-weight:bold">${rep.folio || '—'}</td>
+            tr.innerHTML = `<td style="font-weight:bold">${rep.folio || '—'}</td>
                 <td>${rep.direccion || '—'}</td>
                 <td>${(rep.fecha_creacion || '').split('T')[0] || '—'}</td>
-                <td>${acciones}</td>`;
+                <td>${accion}</td>`;
             tbody.appendChild(tr);
         });
         if (window.lucide) lucide.createIcons();
@@ -506,25 +478,6 @@ const HDM_App = {
             sessionStorage.setItem('DatosCuestionarioHDM', JSON.stringify(rep.data));
             window.open(window.PDF_URL || '', '_blank');
         } catch(e) { if (typeof showCustomAlert === 'function') showCustomAlert('Error', 'No se pudo abrir el PDF: ' + e.message, false); }
-    },
-
-    toggleAll(source) {
-        document.querySelectorAll('.check-rep').forEach(cb => cb.checked = source.checked);
-    },
-
-    eliminarSeleccionados() {
-        const checks = document.querySelectorAll('.check-rep:checked');
-        if (checks.length === 0) {
-            this.showConfirm('Atención', 'Selecciona al menos un reporte para eliminar.', () => {});
-            return;
-        }
-        this.showConfirm(`Eliminar ${checks.length} reporte(s)`, 'Esta acción no se puede deshacer. ¿Deseas continuar?', () => {
-            const ids = Array.from(checks).map(c => c.dataset.id);
-            HDM_Store.eliminarMultiples(ids);
-            if (typeof showCustomAlert === 'function') showCustomAlert('Éxito', 'Reportes eliminados.', true);
-            this.cargarReportes();
-            this.renderTabla();
-        });
     },
 
     showConfirm(title, msg, onConfirm) {
