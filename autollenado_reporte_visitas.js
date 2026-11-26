@@ -18,7 +18,7 @@
             const img = document.createElement('img');
             img.src = data.foto_ubicacion;
             img.className = 'foto-ubicacion-overlay';
-            img.style.cssText = 'position:absolute;top:6mm;right:6mm;width:22mm;height:22mm;object-fit:cover;border:1.5px solid #043185;z-index:10;';
+            img.style.cssText = 'position:absolute;top:8mm;right:15mm;width:30mm;height:24mm;object-fit:cover;border:1.5px solid #043185;z-index:10;';
             page.appendChild(img);
         }
     }
@@ -45,15 +45,18 @@
         if (divs[2]) divs[2].innerHTML = '<input type="radio" checked> CELULAR: <strong>' + (data.proveedor?.celular || '—') + '</strong>';
     });
 
-    // ===== FOTO PROVEEDOR =====
+    // ===== FOTO PROVEEDOR (recuadro blanco junto a "EMPLEADO DEL PROVEEDOR") =====
     if (data.proveedor?.foto) {
-        document.querySelectorAll('.logo-box').forEach(lb => {
-            if (lb.querySelector('.foto-proveedor-overlay')) return;
+        document.querySelectorAll('.provider-box').forEach(pb => {
+            if (pb.querySelector('.foto-proveedor-overlay')) return;
+            const blank = pb.querySelector('.provider-left-blank');
+            if (!blank) return;
             const img = document.createElement('img');
             img.src = data.proveedor.foto;
             img.className = 'foto-proveedor-overlay';
-            img.style.cssText = 'max-height:30px;max-width:100%;margin-top:3px;border:1px solid #043185;object-fit:cover;';
-            lb.appendChild(img);
+            img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+            blank.innerHTML = '';
+            blank.appendChild(img);
         });
     }
 
@@ -131,4 +134,20 @@
             if (content) content.innerHTML = '<img src="' + fotoData + '" style="width:100%;height:100%;object-fit:cover;">';
         }
     });
+
+    // ===== BOTÓN FLOTANTE "Regresar a aplicación" (cierra esta pestaña del PDF) =====
+    if (!document.getElementById('hdm-regresar-style')) {
+        const st = document.createElement('style');
+        st.id = 'hdm-regresar-style';
+        st.textContent = '@media print { #btn-regresar-app { display:none !important; } }';
+        document.head.appendChild(st);
+    }
+    if (!document.getElementById('btn-regresar-app')) {
+        const btn = document.createElement('button');
+        btn.id = 'btn-regresar-app';
+        btn.innerHTML = '&#8592; Regresar a aplicación';
+        btn.style.cssText = 'position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:99999;background:#10b981;color:#fff;border:none;border-radius:30px;padding:10px 22px;font-family:Arial,sans-serif;font-size:13px;font-weight:bold;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.3);';
+        btn.onclick = function() { try { window.close(); } catch(e) {} if (!window.closed) { try { window.history.back(); } catch(e2) {} } };
+        document.body.appendChild(btn);
+    }
 })();

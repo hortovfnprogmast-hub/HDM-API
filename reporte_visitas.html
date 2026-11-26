@@ -110,9 +110,12 @@ table.datos td.colspan-cell { text-align: center; font-weight: 600; color: var(-
                     <div class="ubicacion-row">
                         <div>
                             <div class="form-group"><label class="form-label">Proyecto</label><input type="text" class="form-input" id="proyecto" placeholder="Nombre del proyecto..."></div>
+                            <div class="form-group"><label class="form-label">Nombre del sitio</label><input type="text" class="form-input" id="nombre_sitio" placeholder="Nombre del sitio..."></div>
                             <div class="form-group"><label class="form-label">Calle</label><input type="text" class="form-input" id="direccion" placeholder="Calle y número..."></div>
                             <div class="form-group"><label class="form-label">Colonia</label><input type="text" class="form-input" id="colonia" placeholder="Colonia..."></div>
-                            <div class="form-group"><label class="form-label">Ciudad</label><input type="text" class="form-input" id="ciudad" placeholder="Ciudad..."></div>
+                            <div class="form-group"><label class="form-label">Código postal (CP)</label><input type="text" class="form-input" id="cp" placeholder="C.P...."></div>
+                            <div class="form-group"><label class="form-label">Alcaldía / Municipio</label><input type="text" class="form-input" id="alcaldia" placeholder="Alcaldía o municipio..."></div>
+                            <div class="form-group"><label class="form-label">Ciudad / Estado</label><input type="text" class="form-input" id="ciudad" placeholder="Ciudad o estado..."></div>
                         </div>
                         <div class="ubicacion-foto">
                             <label class="photo-label">Foto de la ubicación</label>
@@ -409,6 +412,7 @@ function verPDF() {
     if (!datos.proveedor || !datos.proveedor.nombre) { showCustomAlert('Atención', 'Captura el nombre del empleado del proveedor.', false); return; }
     if (!datos.recibe || !datos.recibe.nombre) { showCustomAlert('Atención', 'Captura el nombre de quien recibe el trabajo.', false); return; }
     try {
+        if (window.HDM_App && HDM_App.editIdActual) { try { HDM_App.guardarEdicionPDF(datos); } catch(_){} }
         sessionStorage.setItem('DatosCuestionarioHDM', JSON.stringify(datos));
         window.open(PDF_URL, '_blank');
     } catch(e) {
@@ -471,7 +475,7 @@ function setVal(id, v) { if (v && v !== '—') { const el = document.getElementB
             return {
                 tipo: TIPO, folio: window.HDM_FOLIO || '',
                 proyecto: document.getElementById('proyecto').value || '',
-                direccion: document.getElementById('direccion').value || '', colonia: document.getElementById('colonia').value || '', ciudad: document.getElementById('ciudad').value || '',
+                nombre_sitio: document.getElementById('nombre_sitio').value || '', calle_numero: document.getElementById('direccion').value || '', direccion: document.getElementById('direccion').value || '', colonia: document.getElementById('colonia').value || '', cp: document.getElementById('cp').value || '', alcaldia: document.getElementById('alcaldia').value || '', ciudad: document.getElementById('ciudad').value || '',
                 foto_ubicacion: fotos.ubicacion[0] || null,
                 proveedor: { nombre: document.getElementById('prov_nombre').value || '', cargo: document.getElementById('prov_cargo').value || '', celular: document.getElementById('prov_celular').value || '', foto: fotos.proveedor[0] || null },
                 fecha_entrega: document.getElementById('fecha_entrega').value || '', coordenadas: document.getElementById('coordenadas').value || '', horario_entrada: document.getElementById('horario_entrada').value || '', horario_salida: document.getElementById('horario_salida').value || '', jornada: document.getElementById('jornada').value || '', permisos: document.getElementById('permisos').value || '',
@@ -482,7 +486,7 @@ function setVal(id, v) { if (v && v !== '—') { const el = document.getElementB
         }
 
         function cargarBorrador(d) {
-            setVal('proyecto', d.proyecto); setVal('direccion', d.direccion); setVal('colonia', d.colonia); setVal('ciudad', d.ciudad);
+            setVal('proyecto', d.proyecto); setVal('nombre_sitio', d.nombre_sitio); setVal('direccion', d.direccion); setVal('colonia', d.colonia); setVal('cp', d.cp); setVal('alcaldia', d.alcaldia); setVal('ciudad', d.ciudad);
             setVal('prov_nombre', d.proveedor?.nombre); setVal('prov_cargo', d.proveedor?.cargo); setVal('prov_celular', d.proveedor?.celular);
             setVal('fecha_entrega', d.fecha_entrega); setVal('coordenadas', d.coordenadas); setVal('horario_entrada', d.horario_entrada); setVal('horario_salida', d.horario_salida); setVal('jornada', d.jornada); setVal('permisos', d.permisos);
             const params = ['cloro','ph','dureza','tds','alcalinidad','cloruros','otros'];

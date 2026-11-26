@@ -52,14 +52,17 @@
         .e-pendiente { background: #fef3c7; color: #b45309; }
         .e-aceptado { background: #dcfce7; color: #15803d; }
         .e-rechazado { background: #fee2e2; color: #b91c1c; }
+        .e-aceptado { background: #d1fae5; color: #10b981; }
+        .e-pendiente { background: #f1f5f9; color: #64748b; }
+        .estado-badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; text-align: center; }
         .e-borrador { background: #e0e7ff; color: #4338ca; }
         .e-realizado { background: #dbeafe; color: #1d4ed8; }
         .btn { border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; gap: 5px; font-size: 13px; margin: 2px; color: white; }
         .btn-accept { background: var(--success); }
         .btn-reject { background: var(--danger); }
-        .btn-edit { background: #6366f1; text-decoration: none; }
+        .btn-edit { background: var(--primary-blue); text-decoration: none; }
         .btn-pdf { background: var(--primary-blue); }
-        .btn-view { background: #64748b; }
+        .btn-view { background: var(--success); }
         .btn:disabled { opacity: 0.4; cursor: not-allowed; }
         #custom-confirm, #custom-alert, #custom-data, #custom-control { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); z-index: 10001; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
         #custom-alert { z-index: 10000; }
@@ -309,7 +312,7 @@
                     + '<td style="text-align:left">' + (r.direccion || '—') + '</td>'
                     + '<td>' + ((r.fecha_creacion || '').split('T')[0] || '—') + '</td>'
                     + '<td><span class="estado-badge ' + (estRep === 'Realizado' ? 'e-realizado' : 'e-borrador') + '">' + estRep + '</span></td>'
-                    + '<td><span class="estado-badge e-' + ec + '">' + ec + '</span></td>'
+                    + '<td style="text-align:center"><span class="estado-badge e-' + ec + '">' + ec + '</span></td>'
                     + '<td>' + acciones + '</td>';
                 t.appendChild(tr);
             });

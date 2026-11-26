@@ -467,6 +467,24 @@ const HDM_App = {
         this.cambiarTab('nuevo');
     },
 
+    // Guarda los cambios hechos al editar un reporte desde Controles (botón "Generar PDF Lleno").
+    // Actualiza los datos del reporte para que Controles y el PDF reflejen los nuevos cambios.
+    guardarEdicionPDF(datos) {
+        const id = this.editIdActual;
+        if (!id || !datos) return;
+        try {
+            const rep = HDM_Store.obtenerPorId(id);
+            if (!rep) return;
+            rep.data = datos;
+            rep.direccion = datos.direccion || datos.calle_numero || rep.direccion;
+            if (datos.folio) rep.folio = datos.folio;
+            HDM_Store.guardar(rep);
+            if (window.HDM_Firebase && typeof HDM_Firebase.isReady === 'function' && HDM_Firebase.isReady() && typeof HDM_Firebase.guardarReporte === 'function') {
+                try { HDM_Firebase.guardarReporte(rep); } catch(e) {}
+            }
+        } catch(e) { console.warn('[HDM] guardarEdicionPDF:', e && e.message); }
+    },
+
     async verPDFReporte(id) {
         let rep = null;
         try {

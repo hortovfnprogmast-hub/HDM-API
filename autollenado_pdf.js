@@ -14,63 +14,57 @@
         });
     }
 
-    // Helper: encontrar fila por texto parcial en primera celda
-    function findRow(tableIdx, searchTexts) {
-        const tables = document.querySelectorAll('table');
-        const table = tables[tableIdx];
-        if (!table) return null;
-        const arr = Array.isArray(searchTexts) ? searchTexts : [searchTexts];
-        for (const row of table.querySelectorAll('tr')) {
-            const cells = row.querySelectorAll('td');
-            if (cells.length > 0) {
-                const text = cells[0].textContent.toUpperCase();
-                if (arr.every(s => text.includes(s.toUpperCase()))) {
-                    return { row, cells };
-                }
-            }
-        }
-        return null;
-    }
-
-    function fillCell(tableIdx, cellIdx, value, searchTexts) {
-        if (!value || value === '—') return;
-        const found = findRow(tableIdx, searchTexts);
-        if (!found) return;
-        const { cells } = found;
-        if (cells[cellIdx]) {
-            cells[cellIdx].textContent = value;
-            cells[cellIdx].style.textAlign = 'center';
-            cells[cellIdx].style.fontWeight = '600';
-        }
-    }
-
-    // ===== DIRECCIÓN Y COLONIA =====
-    document.querySelectorAll('.radios-left').forEach(rl => {
-        if (rl.dataset.filled) return;
-        rl.querySelectorAll('div').forEach(div => {
-            const txt = div.textContent;
-            if (txt.includes('Dirección:')) {
-                div.innerHTML = '<input type="radio" checked> Dirección: <strong>' + (data.direccion || '—') + '</strong>';
-            } else if (txt.includes('Colonia:')) {
-                div.innerHTML = '<input type="radio" checked> Colonia: <strong>' + (data.colonia || '—') + '</strong>';
-            }
-        });
-        rl.dataset.filled = '1';
-    });
-
-    // ===== FOTO UBICACIÓN (top right de cada página) =====
+    // ===== FOTO UBICACIÓN (top right de cada página — más ancha y alineada a la franja azul) =====
     if (data.foto_ubicacion) {
         document.querySelectorAll('.page').forEach(page => {
             if (page.querySelector('.foto-ubicacion-overlay')) return;
             const img = document.createElement('img');
             img.src = data.foto_ubicacion;
             img.className = 'foto-ubicacion-overlay';
-            img.style.cssText = 'position:absolute;top:6mm;right:6mm;width:22mm;height:22mm;object-fit:cover;border:1.5px solid #043185;z-index:10;';
+            // right:15mm alinea el borde derecho con la franja azul (.info-block); ancho 30mm
+            img.style.cssText = 'position:absolute;top:8mm;right:15mm;width:30mm;height:24mm;object-fit:cover;border:1.5px solid #043185;z-index:10;';
             page.appendChild(img);
         });
     }
 
-    // ===== EMPLEADO DEL PROVEEDOR =====
+    // ===== ENCABEZADO IZQUIERDO: folio + nombre del sitio + dirección estructurada =====
+    document.querySelectorAll('.page').forEach(page => {
+        const rl = page.querySelector('.radios-left');
+        const title = page.querySelector('.main-title');
+        if (!rl || !title) return;
+
+        // Mover el folio al inicio de la columna izquierda
+        const folioSpan = title.querySelector('.pdf-folio-value');
+        if (folioSpan) {
+            const folioDiv = folioSpan.parentElement;
+            if (folioDiv && !folioDiv.dataset.movido) {
+                folioDiv.dataset.movido = '1';
+                folioDiv.style.textAlign = 'left';
+                folioDiv.style.margin = '0 0 2px 0';
+                rl.insertBefore(folioDiv, rl.firstChild);
+            }
+        }
+
+        if (rl.dataset.locFilled) return;
+        let divs = Array.from(rl.querySelectorAll('div'));
+        // Tras mover el folio: divs[0]=folio, divs[1]=recuadro azul.
+        if (divs[1] && divs[2]) {
+            const sitioDiv = document.createElement('div');
+            sitioDiv.innerHTML = '<input type="radio" checked> Nombre del sitio: <strong>' + (data.nombre_sitio || '—') + '</strong>';
+            rl.insertBefore(sitioDiv, divs[2]);
+        }
+        divs = Array.from(rl.querySelectorAll('div'));
+        // [0]=folio, [1]=azul, [2]=sitio, [3]=calle(Dirección), [4]=colonia, [5]=CP, [6]=alcaldía, [7]=ciudad
+        const set = (i, label, val) => { if (divs[i]) divs[i].innerHTML = '<input type="radio" checked> ' + label + ': <strong>' + (val || '—') + '</strong>'; };
+        set(3, 'Calle y número', data.calle_numero || data.direccion);
+        set(4, 'Colonia', data.colonia);
+        set(5, 'C.P.', data.cp);
+        set(6, 'Alcaldía/Mpio', data.alcaldia);
+        set(7, 'Ciudad/Edo', data.ciudad);
+        rl.dataset.locFilled = '1';
+    });
+
+    // ===== EMPLEADO PROVEEDOR =====
     document.querySelectorAll('.provider-fields').forEach(pf => {
         if (pf.dataset.filled) return;
         const divs = pf.querySelectorAll('div');
@@ -80,15 +74,18 @@
         pf.dataset.filled = '1';
     });
 
-    // ===== FOTO PROVEEDOR (debajo del logo) =====
+    // ===== FOTO PROVEEDOR (recuadro blanco junto a "EMPLEADO DEL PROVEEDOR") =====
     if (data.proveedor?.foto) {
-        document.querySelectorAll('.logo-box').forEach(lb => {
-            if (lb.querySelector('.foto-proveedor-overlay')) return;
+        document.querySelectorAll('.provider-box').forEach(pb => {
+            if (pb.querySelector('.foto-proveedor-overlay')) return;
+            const blank = pb.querySelector('.provider-left-blank');
+            if (!blank) return;
             const img = document.createElement('img');
             img.src = data.proveedor.foto;
             img.className = 'foto-proveedor-overlay';
-            img.style.cssText = 'max-height:30px;max-width:100%;margin-top:3px;border:1px solid #043185;object-fit:cover;';
-            lb.appendChild(img);
+            img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+            blank.innerHTML = '';
+            blank.appendChild(img);
         });
     }
 
@@ -135,9 +132,11 @@
             body.innerHTML = '<div style="font-size:8px;line-height:1.3;">' + (data.comentario_salida || '—') + '</div>';
             container.dataset.filled = '1';
         } else if (ht.includes('ESTATUS')) {
-            const est = data.estatus === 'aceptado' ? 'ACEPTADO' : 'NO ACEPTADO';
-            const col = data.estatus === 'aceptado' ? '#10b981' : '#dc2626';
-            body.innerHTML = '<div style="text-align:center;font-weight:bold;color:' + col + ';font-size:11px;">' + est + '</div>';
+            const ok = data.estatus === 'aceptado';
+            const est = ok ? 'ACEPTADO' : 'NO ACEPTADO';
+            const col = ok ? '#10b981' : '#dc2626';
+            const bg = ok ? '#d1fae5' : '#fee2e2';
+            body.innerHTML = '<div style="text-align:center;font-weight:bold;color:' + col + ';background:' + bg + ';font-size:11px;padding:6px 4px;border-radius:4px;">' + est + '</div>';
             container.dataset.filled = '1';
         } else if (ht.includes('FIRMA') && data.firma) {
             body.innerHTML = '<img src="' + data.firma + '" style="max-width:90%;max-height:90%;object-fit:contain;">';
@@ -155,6 +154,35 @@
     const filt = data.equipo_filtracion || {};
     const aq = data.analisis_agua || {};
     const params = ['cloro','ph','dureza','tds','alcalinidad','cloruros'];
+
+    function findRow(tableIdx, searchTexts) {
+        const tables = document.querySelectorAll('table');
+        const table = tables[tableIdx];
+        if (!table) return null;
+        const arr = Array.isArray(searchTexts) ? searchTexts : [searchTexts];
+        for (const row of table.querySelectorAll('tr')) {
+            const cells = row.querySelectorAll('td');
+            if (cells.length > 0) {
+                const text = cells[0].textContent.toUpperCase();
+                if (arr.every(s => text.includes(s.toUpperCase()))) {
+                    return { row, cells };
+                }
+            }
+        }
+        return null;
+    }
+
+    function fillCell(tableIdx, cellIdx, value, searchTexts) {
+        if (!value || value === '—') return;
+        const found = findRow(tableIdx, searchTexts);
+        if (!found) return;
+        const { cells } = found;
+        if (cells[cellIdx]) {
+            cells[cellIdx].textContent = value;
+            cells[cellIdx].style.textAlign = 'center';
+            cells[cellIdx].style.fontWeight = '600';
+        }
+    }
 
     function fillFiltracion(ti) {
         fillCell(ti, 3, filt.f_pulidor?.remplazo, ['PULIDOR']);
@@ -190,7 +218,6 @@
             fillCell(1, i+1, aq.agua_filtrada?.[p], ['FILTRADA']);
         });
     } else if (F === 2) {
-        // Tabla 0: Tratamiento
         const tm = trat.f_multimedia || {};
         const ts = trat.f_suavizador || {};
         [['op',1],['retro',2],['bypass',3],['ener',4],['cambios',5],['mang',6]].forEach(([k,i]) => {
@@ -198,18 +225,14 @@
             fillCell(0, i, ts[k], ['SUAVIZADOR']);
         });
         fillTanqueSalmuera(0, trat.tanque_salmuera);
-        // Tabla 1: Osmosis
         fillOsmosis(1);
-        // Tabla 2: Filtración
         fillFiltracion(2);
-        // Tabla 3: Análisis
         params.forEach((p, i) => {
             fillCell(3, i+1, aq.agua_cruda?.[p], ['CRUDA']);
             fillCell(3, i+1, aq.agua_filtrada?.[p], ['FILTRADA']);
             fillCell(3, i+1, aq.agua_osmotica?.[p], ['OSMOTICA']);
         });
     } else if (F === 3) {
-        // Tabla 0: Tratamiento (5 rows)
         [['LECHO','f_lecho'],['ACTIVADO','f_carbon'],['MULTIMEDIA','f_multimedia'],['SUAVIZADOR','f_suavizador']].forEach(([lab, eq]) => {
             const t = trat[eq] || {};
             [['op',1],['retro',2],['bypass',3],['ener',4],['cambios',5],['mang',6]].forEach(([k,i]) => {
@@ -217,19 +240,14 @@
             });
         });
         fillTanqueSalmuera(0, trat.tanque_salmuera);
-        // Tabla 1: Osmosis
         fillOsmosis(1);
-        // Tabla 2: Filtración
         fillFiltracion(2);
-        // Tabla 3: Análisis
         params.forEach((p, i) => {
             fillCell(3, i+1, aq.agua_cruda?.[p], ['CRUDA']);
             fillCell(3, i+1, aq.agua_suavisada?.[p], ['SUAVISADA']);
             fillCell(3, i+1, aq.agua_osmotica?.[p], ['OSMOTICA']);
         });
     } else if (F === 4) {
-        // Tabla 0: Tratamiento (9 rows, estructura plana con IDs como keys)
-        // Filas completas de 6 celdas
         const fullRows = [
             ['LECHO', 'trat_f_lecho_'],
             ['ACTIVADO', 'trat_f_carbon_'],
@@ -242,30 +260,42 @@
                 fillCell(0, i, trat[prefix + k], [lab]);
             });
         });
-        // ONE CARTRIDEG SED: cells 2 (retro), 4 (ener)
         fillCell(0, 2, trat['trat_one_cart_sed_retro'], ['CARTRID', 'SED']);
         fillCell(0, 4, trat['trat_one_cart_sed_ener'], ['CARTRID', 'SED']);
-        // ONE CARTRIDEG CA: cells 2 (retro), 4 (ener)
         fillCell(0, 2, trat['trat_one_cart_ca_retro'], ['CARTRID', 'CA']);
         fillCell(0, 4, trat['trat_one_cart_ca_ener'], ['CARTRID', 'CA']);
-        // SCALENET: cells 1 (op), 4 (ener), 5 (cambios)
         fillCell(0, 1, trat['trat_scalenet_op'], ['SCALENET']);
         fillCell(0, 4, trat['trat_scalenet_ener'], ['SCALENET']);
         fillCell(0, 5, trat['trat_scalenet_cambios'], ['SCALENET']);
-        // TANQUE SALMUERA: cells 1 (op), 3 (bypass), 5 (mang)
         fillCell(0, 1, trat['trat_tanque_salmuera_op'], ['SALMUERA']);
         fillCell(0, 3, trat['trat_tanque_salmuera_bypass'], ['SALMUERA']);
         fillCell(0, 5, trat['trat_tanque_salmuera_mang'], ['SALMUERA']);
-        // Tabla 1: Osmosis
         fillOsmosis(1);
-        // Tabla 2: Filtración
         fillFiltracion(2);
-        // Tabla 3: Análisis
         params.forEach((p, i) => {
             fillCell(3, i+1, aq.agua_cruda?.[p], ['CRUDA']);
             fillCell(3, i+1, aq.agua_suavisada?.[p], ['SUAVISADA']);
             fillCell(3, i+1, aq.agua_osmotica?.[p], ['OSMOTICA']);
         });
+    }
+
+    // ===== BOTÓN FLOTANTE "Regresar a aplicación" (cierra esta pestaña del PDF) =====
+    if (!document.getElementById('hdm-regresar-style')) {
+        const st = document.createElement('style');
+        st.id = 'hdm-regresar-style';
+        st.textContent = '@media print { #btn-regresar-app { display:none !important; } }';
+        document.head.appendChild(st);
+    }
+    if (!document.getElementById('btn-regresar-app')) {
+        const btn = document.createElement('button');
+        btn.id = 'btn-regresar-app';
+        btn.innerHTML = '&#8592; Regresar a aplicación';
+        btn.style.cssText = 'position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:99999;background:#10b981;color:#fff;border:none;border-radius:30px;padding:10px 22px;font-family:Arial,sans-serif;font-size:13px;font-weight:bold;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.3);';
+        btn.onclick = function() {
+            try { window.close(); } catch(e) {}
+            if (!window.closed) { try { window.history.back(); } catch(e2) {} }
+        };
+        document.body.appendChild(btn);
     }
 
     // Imprimir automáticamente (opcional - descomenta si quieres auto-print)
